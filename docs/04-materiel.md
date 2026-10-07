@@ -7,7 +7,7 @@ supervision SNMP) — une seule syntaxe (RouterOS v7) sur tous les sites et le h
 
 | Rôle | Recommandé | Alternative économique | Pourquoi |
 |---|---|---|---|
-| Routeur / pare-feu | **RB5009UG+S+IN** | hEX S (RB760iGS) | WireGuard à plusieurs centaines de Mb/s, 8 ports Gb + SFP+, marge pour VLAN/pare-feu |
+| Routeur / pare-feu | **RB5009UG+S+IN** (bureau ; la résidence a déjà un hAP ax³) | hAP ax³ ou hEX S (RB760iGS) | WireGuard à plusieurs centaines de Mb/s, 8 ports Gb + SFP+, marge pour VLAN/pare-feu |
 | Switch cœur PoE (caméras + AP) | **CRS328-24P-4S+RM** (24 PoE) | CSS610-8P-2S+IN (8 PoE) ou netPower 16P | VLAN 802.1Q + PoE pour caméras et AP |
 | Point(s) d'accès Wi-Fi | **cAP ax** (plafond) | cAP ac | SSID multiples → VLAN (USERS, IOT, GUEST), gestion centralisée CAPsMAN |
 | Onduleur | 1000–1500 VA line-interactive avec port USB/SNMP | — | Coupures électriques ; supervision via NUT |
@@ -26,6 +26,7 @@ supervision SNMP) — une seule syntaxe (RouterOS v7) sur tous les sites et le h
 | Équipement | Nouveau rôle |
 |---|---|
 | TL-SG1008M (×5) | Switchs d'extrémité **mono-VLAN** branchés sur un port *access* (ex. un groupe de caméras non-PoE, un bureau) |
+| hAP ax³ | **Routeur de la résidence** : pare-feu, WireGuard, OSPF, hotspot, QoS, DHCP/DNS, Wi-Fi 6 (SSID → VLAN), contrôleur CAPsMAN des futurs cAP ax. Ses 5 ports suffisent : 1 vers la box, 1 trunk vers le switch VLAN, les autres en réserve |
 | RB941 hAP lite (×2) | Lab de test des configs ; ou routeur d'un petit site futur ; ou routeur 4G de secours avec clé USB |
 | MANTBox | AP du hotspot sur le VLAN 70 (portail sur le RB5009) |
 | NanoBeam → LiteAP AC + Loco AC | Pont radio vers le point relais, qui transporte VLAN 80 (proches) + VLAN de management (ADMIN) |
@@ -53,8 +54,8 @@ Détection Frigate au bureau : si le Xeon du Dell n'a pas d'iGPU → **Coral USB
 
 ## Priorités d'achat (budget étalé)
 
-1. RB5009 résidence : il permet tout de suite d'**isoler hotspot et proches** (risque n° 1).
-2. Switch PoE VLAN résidence + disques vidéo résidence.
+1. Switch PoE VLAN résidence : avec le **hAP ax³ déjà en place**, il suffit pour **isoler le hotspot et les proches** (risque n° 1).
+2. Disques vidéo résidence.
 3. RB5009 bureau, switch PoE VLAN bureau, disques vidéo bureau.
 4. Onduleurs.
 5. VPS hub (secours + nomades).
