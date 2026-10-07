@@ -10,7 +10,7 @@ flowchart TB
     end
 
     subgraph S1["Site 1 — Résidence (Yas)"]
-        BOX1["Box Yas<br/>DMZ → MikroTik"] --> R1["MikroTik RB5009<br/>10.1.x.1"]
+        BOX1["Box Yas<br/>DMZ → MikroTik"] --> R1["MikroTik hAP ax³<br/>10.1.x.1"]
         R1 --> SW1["Switch VLAN PoE"]
         SW1 --> PVE1["Proxmox Ryzen + Dell<br/>Frigate / Zabbix"]
         SW1 --> CAM1["Caméras (VLAN 50, sans Internet)"]
@@ -106,16 +106,16 @@ probablement sur le même réseau que la maison. Cible :
 
 - **VLAN 70 HOTSPOT** — port du switch dédié à la MANTBox. Deux options :
   - *Option A (recommandée)* : la MANTBox devient un simple point d'accès en pont sur le
-    VLAN 70 ; le **portail captif tourne sur le RB5009** (MikroTik Hotspot, et plus
+    VLAN 70 ; le **portail captif tourne sur le routeur de la résidence (hAP ax³)** (MikroTik Hotspot, et plus
     tard User Manager pour les tickets/comptes). Une seule configuration à gérer, et
     les comptes ainsi que les journaux sont centralisés.
   - *Option B* : la MANTBox garde son portail ; elle est simplement isolée sur le VLAN 70.
 - **VLAN 80 RELAIS** — la NanoBeam et les radios du point relais passent ce VLAN de bout
   en bout (airMAX en mode pont, VLAN transparent). Chaque CPE de proche reçoit une IP
-  en DHCP du RB5009. Les radios Ubiquiti elles-mêmes sont administrées sur le VLAN
+  en DHCP du routeur de la résidence. Les radios Ubiquiti elles-mêmes sont administrées sur le VLAN
   **ADMIN** (VLAN de management des airMAX).
 - **Partage du débit (QoS)** — le montant (10–50 Mb/s) est partagé entre vos usages, les
-  caméras vues à distance, le hotspot et les proches. Files d'attente sur le RB5009 :
+  caméras vues à distance, le hotspot et les proches. Files d’attente sur le routeur du site :
   1. priorité haute : ADMIN, VPN, voix/visio ;
   2. normale : USERS, SERV, flux caméras inter-sites ;
   3. basse et plafonnée : HOTSPOT et RELAIS, avec **PCQ** pour répartir équitablement

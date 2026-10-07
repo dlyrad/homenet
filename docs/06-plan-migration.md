@@ -17,7 +17,7 @@ Chaque phase est réversible et laisse le réseau existant fonctionnel.
 - [ ] VPN nomade (téléphone/PC) vers le hub.
 
 ## Phase 2 — Site 1 (résidence)
-- [ ] Installer le RB5009 derrière la box (DMZ si possible), VLAN, DHCP, DNS, pare-feu par zone.
+- [ ] Installer le routeur (hAP ax³ à la résidence, RB5009 au bureau) derrière la box (DMZ si possible), VLAN, DHCP, DNS, pare-feu par zone.
 - [ ] **Priorité** : basculer la MANTBox sur le VLAN 70 et la NanoBeam/le relais sur le VLAN 80 + QoS — les tiers sortent du réseau de la maison.
 - [ ] Switch PoE VLAN ; migration **VLAN par VLAN** : ADMIN → SERV → USERS → IOT → CAM → GUEST.
 - [ ] Tunnel vers le hub ; supervision de base (Uptime Kuma sur VPS).

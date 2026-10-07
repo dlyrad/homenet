@@ -28,7 +28,7 @@ supervision SNMP) — une seule syntaxe (RouterOS v7) sur tous les sites et le h
 | TL-SG1008M (×5) | Switchs d'extrémité **mono-VLAN** branchés sur un port *access* (ex. un groupe de caméras non-PoE, un bureau) |
 | hAP ax³ | **Routeur de la résidence** : pare-feu, WireGuard, OSPF, hotspot, QoS, DHCP/DNS, Wi-Fi 6 (SSID → VLAN), contrôleur CAPsMAN des futurs cAP ax. Ses 5 ports suffisent : 1 vers la box, 1 trunk vers le switch VLAN, les autres en réserve |
 | RB941 hAP lite (×2) | Lab de test des configs ; ou routeur d'un petit site futur ; ou routeur 4G de secours avec clé USB |
-| MANTBox | AP du hotspot sur le VLAN 70 (portail sur le RB5009) |
+| MANTBox | AP du hotspot sur le VLAN 70 (portail sur le hAP ax³) |
 | NanoBeam → LiteAP AC + Loco AC | Pont radio vers le point relais, qui transporte VLAN 80 (proches) + VLAN de management (ADMIN) |
 | ASUS RT-AC5300 | AP transitoire pendant la migration, puis retrait |
 | Netgear R6220, Xiaomi, Tenda | Retrait (pas de VLAN par SSID, firmwares fermés) |
