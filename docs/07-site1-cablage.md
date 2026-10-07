@@ -17,27 +17,27 @@ Matériel : box Yas → **hAP ax³** (routeur) → **HPE 1920-8G-PoE+ JG921A** (
 
 | Port | PoE+ | Équipement | Mode |
 |---|---|---|---|
-| 1 | ✅ | Caméra (ou cAP ax plus tard) | access VLAN 50 |
-| 2 | ✅ | Caméra | access VLAN 50 |
-| 3 | ✅ | Caméra | access VLAN 50 |
-| 4 | ✅ | Caméra | access VLAN 50 |
+| 1 | ✅ | Caméra PoE actuelle | access VLAN 50 |
+| 2 | ✅ | **Switch actuel de la maison** (PC, imprimante, TV) — le PoE ne gêne pas un appareil non PoE | access VLAN 30 |
+| 3 | ✅ | Caméra / switch TP-Link de caméras (plus tard) | access VLAN 50 |
+| 4 | ✅ | Test du hotspot, puis futur AP du hotspot | access VLAN 70 |
 | 5 | — | Trunk ← hAP ax³ ether2 | tagged tous VLAN |
-| 6 | — | MANTBox (via son injecteur) | access VLAN 70 |
+| 6 | — | MANTBox (via son injecteur) | **étape A** : access VLAN 80 (comme aujourd'hui, derrière le Xiaomi) → **étape B** : access VLAN 70 |
 | 7 | — | NanoBeam (via son injecteur) | **hybrid** : 80 non tagué (trafic des proches, aucune config sur les CPE) + 10 tagué (management des radios) |
 | 8 | — | Proxmox Dell (aujourd'hui sur le switch de la maison) | trunk tagged 10,20 |
-| SFP 1 | — | Module SFP→RJ45 1000BASE-T → switch PoE TP-Link (autres caméras) | access VLAN 50 |
-| SFP 2 | — | Module SFP→RJ45 → **switch actuel de la maison** (PC, imprimante, TV) | access VLAN 30 |
+| SFP 1–2 | — | Libres (pas de module pour l'instant) | désactivés |
 
 Management du switch : IP `10.1.10.2` sur le VLAN 10 uniquement.
 
 ## Points d'attention
 
-- **Ne jamais brancher une radio Ubiquiti/MikroTik en PoE passif 24 V directement sur
-  un port PoE+ 802.3at**, ni l'inverse. Les NanoBeam, LiteAP, Loco et la MANTBox gardent leurs
-  injecteurs et vont sur les ports 6–8, qui ne sont pas PoE.
+- Les radios (NanoBeam, LiteAP, Loco, MANTBox) s'alimentent en **PoE passif 24 V** : un port
+  PoE+ 802.3at ne les alimentera pas. Elles gardent donc leurs injecteurs et vont sur les ports
+  6–8, qui ne sont pas PoE. **Ne jamais relier la sortie PoE d'un injecteur passif à un port
+  PoE+.**
 - **Budget PoE de 65 W** sur 4 ports : 4 caméras à environ 5–8 W chacune, c'est large ; un cAP ax
   consomme environ 15 W au maximum.
 - Les switchs TP-Link non administrables ne portent **qu'un seul VLAN** chacun (port access).
   Ne jamais les mettre sur un trunk.
-- Total de 10 ports : c'est juste pour la résidence. Si besoin plus tard, un second switch VLAN
-  (ex. CSS610-8P-2S+) sur le port SFP 1 en trunk.
+- Sans module SFP, il reste **8 ports** : tout est occupé sauf le port 3. Extension possible :
+  modules SFP→RJ45 (~15 € pièce), ou un second switch VLAN en trunk.

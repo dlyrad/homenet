@@ -58,12 +58,13 @@ Switch de la maison ──── ether1 (WAN) hAP ax³ ether4 ──── PC d'
 
    | Port | Type | PVID | Non tagué | Tagué |
    |---|---|---|---|---|
-   | 1–4 | Access | 50 | 50 | — |
-   | 6 | Access | 70 | 70 | — |
+   | 1, 3 | Access | 50 | 50 | — |
+   | 2 | Access | 30 | 30 | — |
+   | 4 | Access | 70 | 70 | — |
+   | 6 | Access | 80 | 80 | — |
    | 7 | **Hybrid** | 80 | 80 | 10 |
    | 8 | Trunk | 1 | — | 10, 20 |
-   | SFP 1 (9) | Access | 50 | 50 | — |
-   | SFP 2 (10) | Access | 30 | 30 | — |
+   | SFP 1–2 | — | — | — | — (désactivés) |
    | **5 (en dernier)** | Trunk | 1 | — | 10–80 |
 
    Retirer le VLAN 1 non tagué des ports *hybrid*. Au passage du port 5 en trunk, la
@@ -85,9 +86,9 @@ Brancher un PC successivement sur chaque type de port et vérifier :
 |---|---|
 | hAP ether4 | IP `10.1.10.2xx`, accès WinBox `10.1.10.1` et web switch `10.1.10.2` |
 | HPE port 1 (CAM) | IP `10.1.50.x`, **pas d'Internet**, pas d'accès à `10.1.10.1` |
-| HPE port 6 (HOTSPOT) | IP `10.1.70.x` ou `10.1.71.x`, **page de connexion** au 1er site web ; après connexion : Internet, rien d'autre |
+| HPE port 4 (HOTSPOT) | IP `10.1.70.x` ou `10.1.71.x`, **page de connexion** au 1er site web ; après connexion : Internet, rien d'autre |
 | HPE port 7 (RELAIS) | IP `192.168.20.1xx`, Internet, **aucun accès** à `10.1.x` ni à `192.168.1.x` |
-| HPE port SFP 2 (USERS) | IP `10.1.30.x`, Internet |
+| HPE port 2 (USERS) | IP `10.1.30.x`, Internet |
 | Wi-Fi « Maison » / « Maison-IoT » / « Maison-Invites » | `10.1.30.x` / `10.1.40.x` / `10.1.60.x` ; invités isolés entre eux |
 
 Pendant les tests, le hAP ax³ sort sur Internet par son ether1, branché au switch de la maison (étape 0).
@@ -96,26 +97,31 @@ Pendant les tests, le hAP ax³ sort sur Internet par son ether1, branché au swi
 
 1. Box Yas : réserver `192.168.1.2`, puis **DMZ → 192.168.1.2**.
 2. Installer le hAP ax³ et le HPE 1920 à leur place définitive. Brancher la box sur ether1.
-3. **MANTBox** (risque n° 1) : sauvegarder sa config, la passer en **simple point d'accès en
-   pont** (portail captif désactivé ; le hotspot tourne désormais sur le hAP ax³) avec isolation
-   des clients, puis la brancher (avec son injecteur) sur le **port 6**.
-4. **NanoBeam** : la débrancher du Xiaomi et l'éteindre (le Xiaomi aussi : sinon deux
-   serveurs DHCP `192.168.20.x`). La brancher (avec son injecteur) sur le **port 7**. Le
-   hAP ax³ reprend l'adresse `192.168.20.5` et le DHCP : chez les proches, rien ne change.
-   Si des CPE ont une IP fixe en `192.168.20.x`, les ajouter en baux statiques pour éviter
-   les doublons.
+3. **Avant d'éteindre le Xiaomi** : relever dans son interface la liste des appareils connectés
+   (IP + MAC) et vérifier que les équipements à IP fixe des proches ont bien `192.168.20.5`
+   comme passerelle. Cette liste devient l'inventaire du VLAN 80 (NetBox).
+4. **Xiaomi → hAP ax³** : éteindre le Xiaomi, puis brancher la **NanoBeam** sur le **port 7** et
+   la **MANTBox** sur le **port 6** (VLAN 80, chacune avec son injecteur). Le hAP ax³ reprend
+   l'adresse `192.168.20.5` : pour les proches et pour la MANTBox, rien ne change, mais **ils
+   n'atteignent plus la maison**. C'est la fin du risque n° 1.
+   Le DHCP du VLAN 80 reste **désactivé** (tous les équipements sont en IP fixe) ; à activer
+   plus tard sur une petite plage vérifiée libre (`/ip dhcp-server enable dhcp-relais`).
    Ensuite, sur chaque radio (NanoBeam, LiteAP, Loco) : activer le **VLAN de management 10**
    et une IP fixe `10.1.10.3x`, une radio à la fois, en commençant par la plus éloignée.
-5. Caméras : retirer le Netgear ; caméras sur les ports 1–4 et sur le switch TP-Link du port SFP 1 ; noter leurs baux
+5. **MANTBox, étape B (plus tard)** : quand le portail captif du hAP ax³ est validé sur le port 4,
+   sauvegarder la config de la MANTBox, la passer en **simple point d'accès en pont** (portail
+   désactivé, isolation des clients), puis passer le **port 6 en VLAN 70**. Les comptes ou
+   tickets du hotspot sont alors recréés dans le hAP ax³ (`/ip hotspot user`).
+6. Caméras : retirer le Netgear ; caméra sur le port 1 (et le port 3 pour la suivante) ; noter leurs baux
    (`10.1.50.5x+`) puis les passer en **baux statiques** `10.1.50.10–49`.
-6. Proxmox Dell : **avant** de le déplacer, passer `vmbr0` en *VLAN aware* et préparer l'IP de
+7. Proxmox Dell : **avant** de le déplacer, passer `vmbr0` en *VLAN aware* et préparer l'IP de
    gestion sur `vmbr0.20` (`10.1.20.10`) ; puis le brancher sur le **port 8** du HPE.
    Le Ryzen (ether3 du hAP ax³) fera de même avec une IP en `10.1.20.11`.
-7. Switch de la maison (PC, imprimante, TV) : le relier au **port SFP 2** (VLAN 30) au lieu de
+8. Switch de la maison (PC, imprimante, TV) : le relier au **port 2** (VLAN 30) au lieu de
    la box. Le PC d'administration passe sur ether4 du hAP ax³ (VLAN 10).
    La box n'a alors plus qu'un câble : celui vers ether1 du hAP ax³.
-8. Ajuster les plafonds `q-hotspot` et `q-relais` d'après le débit montant réel (voir les tests de débit de la box).
-9. Retirer le Xiaomi et le Netgear ; sauvegarde `res-rtr-01-j1`.
+9. Ajuster les plafonds `q-hotspot` et `q-relais` d'après le débit montant réel (voir les tests de débit de la box).
+10. Retirer le Xiaomi et le Netgear ; sauvegarde `res-rtr-01-j1`.
 
 ## Retour arrière
 

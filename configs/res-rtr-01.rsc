@@ -15,6 +15,7 @@
 # Ports :
 #   ether1 (2,5 GbE) = WAN vers box Yas (192.168.1.2/24, passerelle 192.168.1.254, DMZ)
 #   ether2           = trunk vers HPE 1920 port 5 (VLAN 10..80 tagués)
+#   VLAN 80 RELAIS   = 192.168.20.0/24 (reprise du Xiaomi) : NanoBeam + MANTBox (étape A)
 #   ether3           = Proxmox Ryzen (trunk 10, 20, 50 tagués)
 #   ether4, ether5   = accès ADMIN (VLAN 10 non tagué)
 #   wifi1 (5 GHz), wifi2 (2,4 GHz) = SSID Maison (30), IoT (40, 2,4 GHz), Invités (60)
@@ -130,7 +131,7 @@ add name=pool-iot ranges=10.1.40.50-10.1.40.250
 add name=pool-cam ranges=10.1.50.50-10.1.50.250
 add name=pool-guest ranges=10.1.60.50-10.1.60.250
 add name=pool-hotspot ranges=10.1.70.10-10.1.71.250
-add name=pool-relais ranges=192.168.20.100-192.168.20.250 comment="Aligner sur la plage DHCP actuelle du Xiaomi"
+add name=pool-relais ranges=192.168.20.240-192.168.20.250 comment="Petite plage à vérifier libre : les équipements des proches sont en IP fixe"
 
 /ip dhcp-server
 add name=dhcp-admin interface=vl10-admin address-pool=pool-admin lease-time=1h comment="Dépannage uniquement"
@@ -140,7 +141,7 @@ add name=dhcp-iot interface=vl40-iot address-pool=pool-iot lease-time=1d
 add name=dhcp-cam interface=vl50-cam address-pool=pool-cam lease-time=1d comment="Passer chaque caméra en bail statique (.10-.49)"
 add name=dhcp-guest interface=vl60-guest address-pool=pool-guest lease-time=2h
 add name=dhcp-hotspot interface=vl70-hotspot address-pool=pool-hotspot lease-time=1h
-add name=dhcp-relais interface=vl80-relais address-pool=pool-relais lease-time=1d comment="Passer chaque CPE en bail statique"
+add name=dhcp-relais interface=vl80-relais address-pool=pool-relais lease-time=1d disabled=yes comment="Désactivé : proches en IP fixe (ex-Xiaomi). Activer après inventaire"
 
 /ip dhcp-server network
 add address=10.1.10.0/24 gateway=10.1.10.1 dns-server=10.1.10.1 ntp-server=10.1.10.1 domain=res.home.arpa
