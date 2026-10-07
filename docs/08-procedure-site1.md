@@ -24,23 +24,86 @@ Switch de la maison ──── ether1 (WAN) hAP ax³ ether4 ──── PC d'
   et la page DHCP de la box) et hors de la plage DHCP de la box ; sinon, changer l'adresse
   dans le script.
 
-## Étape 1 — hAP ax³
+## Étape 1 — hAP ax³ : appliquer la configuration
 
-1. Brancher le PC sur **ether4**, ouvrir WinBox, se connecter par **adresse MAC**.
-2. **System → Packages → Check for updates** : rester sur le canal *long-term* (7.23.x) ;
-   vérifier que le paquet `wifi-qcom` est présent. **System → RouterBOARD → Upgrade**
-   (firmware), puis redémarrer.
-3. Réinitialiser à blanc : `/system reset-configuration no-defaults=yes skip-backup=yes`.
-4. Reconnexion par MAC, glisser `configs/res-rtr-01.rsc` dans **Files**, puis, dans le
-   terminal : `/import file-name=res-rtr-01.rsc verbose=yes`.
-   - La session peut couper à la dernière ligne (activation du filtrage VLAN) : c'est normal.
-   - Le PC (sur ether4) reçoit une adresse `10.1.10.2xx` → se reconnecter sur **10.1.10.1**.
-   - En cas d'erreur, `verbose=yes` affiche la ligne fautive : la noter et me la transmettre.
-5. Copier `res-rtr-01.secrets.rsc.example` en `res-rtr-01.secrets.rsc`, remplacer les `<...>`,
-   l'importer, puis le supprimer du routeur (voir l'en-tête du fichier).
-6. Se reconnecter avec le nouveau compte, puis `/user remove admin`.
-7. Sauvegarde : `/system backup save name=res-rtr-01-j0` et `/export file=res-rtr-01-j0`
-   → récupérer les deux fichiers sur le PC (jamais dans Git : l'export peut contenir des secrets).
+### 1.1 Préparer les fichiers sur le PC
+
+1. Télécharger **WinBox 4** (mikrotik.com → Software → WinBox).
+2. Récupérer le dépôt : `git clone https://github.com/dlyrad/homenet` (ou *Code → Download ZIP*).
+3. Relire `configs/res-rtr-01.rsc` : noms de Wi-Fi, adresse WAN `192.168.1.2`, passerelle
+   `192.168.1.254`. Modifier si besoin (Bloc-notes ou VS Code).
+4. Copier `configs/res-rtr-01.secrets.rsc.example` en **`res-rtr-01.secrets.rsc`** (hors du
+   dossier Git, par ex. dans `Documents\homenet-secrets\`), remplacer chaque `<...>` par une
+   vraie valeur. Mots de passe Wi-Fi : 12 caractères minimum.
+
+> Les deux fichiers sont en ASCII (sans accents) : RouterOS les importe sans souci d'encodage.
+
+### 1.2 Mettre à jour le routeur (configuration d'usine encore active)
+
+1. Câblage de l'étape 0 : **ether1** → switch de la maison, **PC → ether4**.
+   Le PC reçoit une adresse `192.168.88.x` du hAP ax³ (configuration d'usine).
+2. WinBox → onglet **Neighbors** → cliquer sur l'adresse **MAC** du hAP ax³ → compte `admin`,
+   mot de passe imprimé sur l'**étiquette** du routeur.
+3. **System → Packages → Check For Updates** : *Channel* = **long-term** → *Download&Install*.
+   Le routeur redémarre. Vérifier que `wifi-qcom` figure dans la liste des paquets.
+4. **System → RouterBOARD → Upgrade**, puis **System → Reboot** (mise à jour du firmware).
+
+### 1.3 Remise à zéro sans configuration
+
+1. **System → Reset Configuration** : cocher **No Default Configuration** et **Do Not Backup**
+   → *Reset Configuration*. (En terminal : `/system reset-configuration no-defaults=yes skip-backup=yes`.)
+2. Le routeur redémarre **vide** (aucune IP). Le PC n'a plus d'adresse : c'est normal.
+3. WinBox → **Neighbors** → connexion par **MAC** (`admin` + mot de passe de l'étiquette).
+
+### 1.4 Importer la configuration
+
+1. **Files** → glisser-déposer `res-rtr-01.rsc` dans la fenêtre.
+2. **New Terminal** :
+   ```
+   /import file-name=res-rtr-01.rsc verbose=yes
+   ```
+3. Le terminal affiche chaque commande. À la dernière ligne (filtrage VLAN), la session WinBox
+   peut se couper : **c'est normal**.
+4. Le PC (sur ether4, en DHCP) reçoit une adresse `10.1.10.2xx`. Si ce n'est pas le cas : débrancher
+   puis rebrancher le câble, ou `ipconfig /renew` dans PowerShell.
+5. WinBox → se connecter à **`10.1.10.1`** (`admin` + mot de passe de l'étiquette).
+
+> **En cas d'erreur pendant l'import** : l'import s'arrête à la ligne fautive. Noter le message,
+> me l'envoyer, puis **recommencer depuis 1.3** (remise à zéro) avec le script corrigé : un
+> import partiel ne doit pas être complété à la main.
+
+### 1.5 Secrets, puis compte administrateur
+
+1. **Files** → déposer `res-rtr-01.secrets.rsc`, puis :
+   ```
+   /import file-name=res-rtr-01.secrets.rsc verbose=yes
+   /file remove res-rtr-01.secrets.rsc
+   ```
+2. **Se déconnecter**, se reconnecter à `10.1.10.1` avec le **nouveau compte** ; si ça marche :
+   ```
+   /user remove admin
+   ```
+
+### 1.6 Vérifications
+
+```
+/ip address print
+/interface bridge vlan print
+/ping 1.1.1.1 count=3
+/ip dns cache print count-only
+/ip dhcp-server lease print
+/interface wifi print
+```
+Attendu : les 8 adresses `10.1.x.1` + `192.168.20.5` + `192.168.1.2` ; le ping répond ; le PC
+navigue sur Internet ; les Wi-Fi « Maison », « Maison-IoT » et « Maison-Invites » sont visibles.
+
+### 1.7 Sauvegarde
+
+```
+/system backup save name=res-rtr-01-j0
+/export file=res-rtr-01-j0
+```
+**Files** → récupérer les deux fichiers sur le PC (dans `homenet-secrets`, **jamais dans Git**).
 
 ## Étape 2 — HPE 1920 (interface web)
 
@@ -58,10 +121,9 @@ Switch de la maison ──── ether1 (WAN) hAP ax³ ether4 ──── PC d'
 
    | Port | Type | PVID | Non tagué | Tagué |
    |---|---|---|---|---|
-   | 1, 3 | Access | 50 | 50 | — |
+   | 1, 3, 4 | Access | 50 | 50 | — |
    | 2 | Access | 30 | 30 | — |
-   | 4 | Access | 70 | 70 | — |
-   | 6 | Access | 80 | 80 | — |
+   | 6 | Access | **70 pendant les tests**, puis **80** à la bascule | idem | — |
    | 7 | **Hybrid** | 80 | 80 | 10 |
    | 8 | Trunk | 1 | — | 10, 20 |
    | SFP 1–2 | — | — | — | — (désactivés) |
@@ -86,9 +148,11 @@ Brancher un PC successivement sur chaque type de port et vérifier :
 |---|---|
 | hAP ether4 | IP `10.1.10.2xx`, accès WinBox `10.1.10.1` et web switch `10.1.10.2` |
 | HPE port 1 (CAM) | IP `10.1.50.x`, **pas d'Internet**, pas d'accès à `10.1.10.1` |
-| HPE port 4 (HOTSPOT) | IP `10.1.70.x` ou `10.1.71.x`, **page de connexion** au 1er site web ; après connexion : Internet, rien d'autre |
+| HPE port 6 (HOTSPOT, provisoirement en VLAN 70) | IP `10.1.70.x` ou `10.1.71.x`, **page de connexion** au 1er site web ; après connexion : Internet, rien d'autre |
 | HPE port 7 (RELAIS) | IP `192.168.20.1xx`, Internet, **aucun accès** à `10.1.x` ni à `192.168.1.x` |
 | HPE port 2 (USERS) | IP `10.1.30.x`, Internet |
+
+Après les tests : passer le **port 6 en VLAN 80** (PVID 80, non tagué 80) et **enregistrer** (*Save*).
 | Wi-Fi « Maison » / « Maison-IoT » / « Maison-Invites » | `10.1.30.x` / `10.1.40.x` / `10.1.60.x` ; invités isolés entre eux |
 
 Pendant les tests, le hAP ax³ sort sur Internet par son ether1, branché au switch de la maison (étape 0).
@@ -108,23 +172,12 @@ Pendant les tests, le hAP ax³ sort sur Internet par son ether1, branché au swi
    plus tard sur une petite plage vérifiée libre (`/ip dhcp-server enable dhcp-relais`).
    Ensuite, sur chaque radio (NanoBeam, LiteAP, Loco) : activer le **VLAN de management 10**
    et une IP fixe `10.1.10.3x`, une radio à la fois, en commençant par la plus éloignée.
-5. **MANTBox, étape B (plus tard)** : quand le portail captif du hAP ax³ est validé sur le port 4,
-   sauvegarder la config de la MANTBox, la passer en **simple point d'accès en pont** (portail
-   désactivé, isolation des clients), puis passer le **port 6 en VLAN 70**. Les comptes ou
-   tickets du hotspot sont migrés (la MANTBox est sous RouterOS, même syntaxe) :
-   - sur la MANTBox : `/ip hotspot user profile export file=hs-profils` et
-     `/ip hotspot user export file=hs-comptes` ; récupérer aussi le dossier `hotspot/` si les
-     pages de connexion ont été personnalisées ;
-   - si la MANTBox utilise **User Manager** au lieu de comptes locaux, me le signaler : la
-     migration est différente ;
-   - ouvrir les deux fichiers `.rsc` : retirer de l'export des profils les paramètres propres à la
-     MANTBox (`parent-queue`, `address-pool`) et ajouter `parent-queue=q-hotspot` à chaque profil ;
-   - sur le hAP ax³ : importer d'abord les profils, puis les comptes ; copier les pages
-     personnalisées dans `hotspot/` ;
-   - tester un compte existant sur le port 4 **avant** de basculer le port 6 en VLAN 70 ;
-   - ces exports contiennent des mots de passe : **ne jamais les mettre dans Git**.
-6. Caméras : retirer le Netgear ; caméra sur le port 1 (et le port 3 pour la suivante) ; noter leurs baux
-   (`10.1.50.5x+`) puis les passer en **baux statiques** `10.1.50.10–49`.
+5. **MANTBox, étape B (plus tard)** : le hotspot et ses tickets passent sur le hAP ax³ ;
+   la MANTBox est réinitialisée en simple point d'accès. Voir la section « Étape B » ci-dessous.
+6. Caméras (PoE + Wi-Fi) : on les **câble en PoE** (plus fiable, pas de Wi-Fi à sécuriser) sur
+   les **ports 1, 3 et 4**. Retirer le Netgear. Noter leurs baux (`10.1.50.5x+`) puis les passer en
+   **baux statiques** `10.1.50.11–13`. Effacer ou désactiver leur configuration Wi-Fi (elles
+   n'ont de toute façon plus accès au cloud Tuya).
 7. Proxmox Dell : **avant** de le déplacer, passer `vmbr0` en *VLAN aware* et préparer l'IP de
    gestion sur `vmbr0.20` (`10.1.20.10`) ; puis le brancher sur le **port 8** du HPE.
    Le Ryzen (ether3 du hAP ax³) fera de même avec une IP en `10.1.20.11`.
@@ -133,6 +186,46 @@ Pendant les tests, le hAP ax³ sort sur Internet par son ether1, branché au swi
    La box n'a alors plus qu'un câble : celui vers ether1 du hAP ax³.
 9. Ajuster les plafonds `q-hotspot` et `q-relais` d'après le débit montant réel (voir les tests de débit de la box).
 10. Retirer le Xiaomi et le Netgear ; sauvegarde `res-rtr-01-j1`.
+
+## Étape B — Hotspot sur le hAP ax³ + Mikhmon (plus tard)
+
+Mikhmon gère les tickets via l'**API RouterOS** (port TCP 8728) : il suffit de le faire pointer
+vers le hAP ax³ au lieu de la MANTBox.
+
+1. **Exporter depuis la MANTBox** (avant toute réinitialisation) :
+   ```
+   /ip hotspot user profile export file=hs-profils
+   /ip hotspot user export file=hs-comptes
+   /system script export file=hs-scripts
+   /system scheduler export file=hs-planif
+   ```
+   Récupérer aussi le dossier `hotspot/` (pages de connexion personnalisées), puis faire une
+   sauvegarde complète : `/system backup save name=mantbox-avant-reset`.
+   Ces fichiers contiennent des mots de passe : **jamais dans Git**.
+2. **Nettoyer** `hs-profils.rsc` : retirer `address-pool=` et `parent-queue=` propres à la
+   MANTBox, ajouter `parent-queue=q-hotspot` à chaque profil. Garder les `on-login` (scripts
+   Mikhmon qui gèrent l'expiration des tickets).
+3. **Importer sur le hAP ax³**, dans l'ordre : profils, scripts, planificateur, comptes ;
+   copier les pages personnalisées dans `hotspot/`.
+4. **Ouvrir l'API au seul Mikhmon** :
+   ```
+   /ip service set api disabled=no address=10.1.10.0/24,10.1.20.0/24
+   /ip firewall filter enable [find comment="IN: API RouterOS pour Mikhmon (etape B)"]
+   ```
+   Le compte `mikhmon` (groupe `mikhmon`) est créé par le fichier secrets.
+   Dans Mikhmon, nouvelle session : adresse **`10.1.10.1`** (Mikhmon sur le PC admin) ou
+   **`10.1.20.1`** (Mikhmon sur un serveur du VLAN 20), utilisateur `mikhmon`, port 8728,
+   hotspot `hs-res`.
+5. **Réinitialiser la MANTBox** en point d'accès simple : *Quick Set → Mode : Bridge* (ou
+   `no-defaults` puis un bridge `wlan1 + ether1`), SSID du hotspot, **sans sécurité** (le portail
+   fait l'authentification), **Default Forward décoché** (isolation des clients), IP de
+   gestion fixe `10.1.10.31` plus tard via VLAN 10.
+6. **Basculer** : port 6 du HPE en **VLAN 70**, *Save*. Tester un ticket existant et un ticket
+   neuf généré par Mikhmon.
+7. **Retour arrière** : port 6 en VLAN 80, restaurer `mantbox-avant-reset.backup` sur la MANTBox.
+
+> Mikhmon parle à l'API **en clair** : il ne doit jamais être exposé à Internet. La « version
+> améliorée » envisagée pourra utiliser l'**API REST** de RouterOS v7 (HTTPS) à la place.
 
 ## Retour arrière
 

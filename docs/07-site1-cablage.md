@@ -17,12 +17,12 @@ Matériel : box Yas → **hAP ax³** (routeur) → **HPE 1920-8G-PoE+ JG921A** (
 
 | Port | PoE+ | Équipement | Mode |
 |---|---|---|---|
-| 1 | ✅ | Caméra PoE actuelle | access VLAN 50 |
+| 1 | ✅ | Caméra 1 (PoE, actuellement derrière le Netgear) | access VLAN 50 |
 | 2 | ✅ | **Switch actuel de la maison** (PC, imprimante, TV) — le PoE ne gêne pas un appareil non PoE | access VLAN 30 |
-| 3 | ✅ | Caméra / switch TP-Link de caméras (plus tard) | access VLAN 50 |
-| 4 | ✅ | Test du hotspot, puis futur AP du hotspot | access VLAN 70 |
+| 3 | ✅ | Caméra 2 (PoE) | access VLAN 50 |
+| 4 | ✅ | Caméra 3 (PoE) | access VLAN 50 |
 | 5 | — | Trunk ← hAP ax³ ether2 | tagged tous VLAN |
-| 6 | — | MANTBox (via son injecteur) | **étape A** : access VLAN 80 (comme aujourd'hui, derrière le Xiaomi) → **étape B** : access VLAN 70 |
+| 6 | — | MANTBox (via son injecteur) | tests sur table : VLAN 70 ; **étape A** : access VLAN 80 (comme aujourd'hui, derrière le Xiaomi) → **étape B** : access VLAN 70 |
 | 7 | — | NanoBeam (via son injecteur) | **hybrid** : 80 non tagué (trafic des proches, aucune config sur les CPE) + 10 tagué (management des radios) |
 | 8 | — | Proxmox Dell (aujourd'hui sur le switch de la maison) | trunk tagged 10,20 |
 | SFP 1–2 | — | Libres (pas de module pour l'instant) | désactivés |
@@ -39,5 +39,6 @@ Management du switch : IP `10.1.10.2` sur le VLAN 10 uniquement.
   consomme environ 15 W au maximum.
 - Les switchs TP-Link non administrables ne portent **qu'un seul VLAN** chacun (port access).
   Ne jamais les mettre sur un trunk.
-- Sans module SFP, il reste **8 ports** : tout est occupé sauf le port 3. Extension possible :
+- Sans module SFP, les **8 ports sont tous occupés**. Les caméras sont câblées en PoE (elles
+  ont aussi le Wi-Fi, non utilisé). Extension possible :
   modules SFP→RJ45 (~15 € pièce), ou un second switch VLAN en trunk.
