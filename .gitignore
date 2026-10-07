@@ -3,3 +3,6 @@
 *.backup
 *.key
 .env
+
+# Exports du hotspot (contiennent des mots de passe)
+hs-*.rsc

@@ -111,7 +111,18 @@ Pendant les tests, le hAP ax³ sort sur Internet par son ether1, branché au swi
 5. **MANTBox, étape B (plus tard)** : quand le portail captif du hAP ax³ est validé sur le port 4,
    sauvegarder la config de la MANTBox, la passer en **simple point d'accès en pont** (portail
    désactivé, isolation des clients), puis passer le **port 6 en VLAN 70**. Les comptes ou
-   tickets du hotspot sont alors recréés dans le hAP ax³ (`/ip hotspot user`).
+   tickets du hotspot sont migrés (la MANTBox est sous RouterOS, même syntaxe) :
+   - sur la MANTBox : `/ip hotspot user profile export file=hs-profils` et
+     `/ip hotspot user export file=hs-comptes` ; récupérer aussi le dossier `hotspot/` si les
+     pages de connexion ont été personnalisées ;
+   - si la MANTBox utilise **User Manager** au lieu de comptes locaux, me le signaler : la
+     migration est différente ;
+   - ouvrir les deux fichiers `.rsc` : retirer de l'export des profils les paramètres propres à la
+     MANTBox (`parent-queue`, `address-pool`) et ajouter `parent-queue=q-hotspot` à chaque profil ;
+   - sur le hAP ax³ : importer d'abord les profils, puis les comptes ; copier les pages
+     personnalisées dans `hotspot/` ;
+   - tester un compte existant sur le port 4 **avant** de basculer le port 6 en VLAN 70 ;
+   - ces exports contiennent des mots de passe : **ne jamais les mettre dans Git**.
 6. Caméras : retirer le Netgear ; caméra sur le port 1 (et le port 3 pour la suivante) ; noter leurs baux
    (`10.1.50.5x+`) puis les passer en **baux statiques** `10.1.50.10–49`.
 7. Proxmox Dell : **avant** de le déplacer, passer `vmbr0` en *VLAN aware* et préparer l'IP de

@@ -140,10 +140,13 @@ probablement sur le même réseau que la maison. Cible :
   enregistrent par ONVIF sans cloud ; à défaut, retrait.
 - **Rétention 3 semaines**, stockage par site, enregistrement continu (marge 20 %) :
 
-| Débit par caméra | Par caméra / 21 j | 15 caméras / 21 j |
+| Débit par caméra | Par caméra / 21 j | 3 caméras (un site) / 21 j |
 |---|---|---|
-| 2 Mb/s (H.265, 4 MP) | ~450 Go | **~7 To** → prévoir 8 To |
-| 4 Mb/s (H.264, 1080p–4 MP) | ~900 Go | **~14 To** → prévoir 16 To |
+| 2 Mb/s (H.265, 4 MP) | ~450 Go | **~1,4 To** |
+| 4 Mb/s (H.264, 1080p–4 MP) | ~900 Go | **~2,7 To** |
+
+  → **un disque de surveillance de 4 To par site** couvre 3 semaines en continu, même en
+  H.264, avec de la marge pour 1 ou 2 caméras de plus.
 
   En pratique, on enregistre en continu en sous-flux et en flux principal uniquement sur
   événement (mouvement/personne). On divise ainsi le volume par 3 à 5 tout en gardant la

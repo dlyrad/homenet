@@ -42,16 +42,16 @@ Les mini-serveurs n'acceptent en général pas de disques 3,5". On ajoute donc p
 
 | Option | Matériel | Remarque |
 |---|---|---|
-| **A (recommandée)** | Boîtier DAS USB 3 / USB-C 2 baies + 2 disques **surveillance** (WD Purple / Seagate SkyHawk) de 8 To | Monté dans Proxmox, dédié à Frigate |
+| **A (recommandée)** | Boîtier USB 3 1 baie + 1 disque **surveillance** (WD Purple / Seagate SkyHawk) de **4 To** par site | Monté dans Proxmox, dédié à Frigate (3 caméras par site) |
 | B | Réutiliser les disques des NVR existants (s'ils en ont) | Capacité souvent faible (1–4 To) |
 | C | NAS 2 baies (partage NFS) | Plus cher, mais mutualisable pour les sauvegardes |
 
-Taille à ajuster selon le nombre de caméras par site (voir le calcul dans
+Calcul pour 3 caméras par site (voir le calcul dans
 [02-architecture.md](02-architecture.md) §6) : ~0,5–1 To par caméra pour 21 jours en
 continu, beaucoup moins en mode « continu sous-flux + événements en flux principal ».
 
-Détection Frigate au bureau : si le Xeon du Dell n'a pas d'iGPU → **Coral USB TPU**
-(~60 €) ou **Hailo-8L**.
+Détection Frigate au bureau : avec 3 caméras, le CPU du Dell peut suffire (détection à 5 i/s) ;
+si la charge est trop forte ou que le Xeon n'a pas d'iGPU → **Coral USB TPU** (~60 €).
 
 ## Priorités d'achat (budget étalé)
 

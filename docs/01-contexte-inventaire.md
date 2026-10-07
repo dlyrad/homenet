@@ -35,13 +35,13 @@ transit entre la box et le MikroTik et n'est jamais routé entre les sites.
 | Points d'accès Tenda | ? | Pas de VLAN par SSID | Retrait progressif |
 | TP-Link TL-SG1008M (non administrable) | 5 | OK en switch de bord mono-VLAN | Switch d'extrémité (ex. grappe de caméras sur un port *access*) |
 | Routeurs Xiaomi | ? | Firmware fermé | Retrait |
-| MikroTik MANTBox | 1 | Radio extérieure | **Hotspot / portail captif** pour des clients |
+| MikroTik MANTBox | 1 | Radio extérieure | **Hotspot / portail captif** pour des clients, **avec comptes/tickets** (à migrer vers le hAP ax³, étape B) |
 | Ubiquiti NanoBeam | 1 | Radio point-à-point | **Pont** résidence → point relais |
 | Ubiquiti LiteAP AC | 1 | Secteur point-multipoint | **Point d'accès** au point relais pour les proches |
 | Ubiquiti Loco AC | 2 | Radio | Point d'accès au relais (1) ; usage de la 2e à préciser |
 | Mini-serveur Dell Xeon 7e gén., 16 Go, 1 To SSD, Proxmox | 2 | 1 résidence, 1 bureau | Services d'infra par site |
 | Mini-serveur Ryzen AI 9 HX470, 32 Go DDR5, 1 To NVMe | 1 | Puissant, iGPU/NPU | NVR intelligent (Frigate) + supervision centrale |
-| Caméras IP chinoises (Tuya/Smart Life) | ~15 | **ONVIF** → flux RTSP local exploitable | VLAN caméras **sans Internet** |
+| Caméras IP chinoises (Tuya/Smart Life) | **6** (3 résidence, 3 bureau) | **ONVIF** → flux RTSP local exploitable | VLAN caméras **sans Internet** |
 | NVR sans marque (Tuya/Smart Life) | ≥2 | Capacité disque à vérifier | Enregistrement 24/7 local, ou remplacés par Frigate |
 | Objets connectés Tuya / Google Assistant | ? | Dépendants du cloud | VLAN IoT |
 
