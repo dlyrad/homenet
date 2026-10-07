@@ -26,6 +26,7 @@ supervision SNMP) — une seule syntaxe (RouterOS v7) sur tous les sites et le h
 | Équipement | Nouveau rôle |
 |---|---|
 | TL-SG1008M (×5) | Switchs d'extrémité **mono-VLAN** branchés sur un port *access* (ex. un groupe de caméras non-PoE, un bureau) |
+| HPE OfficeConnect 1920 | **Switch cœur de la résidence** : trunk vers le hAP ax³, ports *access* par VLAN, trunk vers la NanoBeam (VLAN 80 + ADMIN) et port VLAN 70 pour la MANTBox. S'il n'est pas PoE, les caméras passent par les switchs PoE non administrables existants (un port *access* VLAN 50 par grappe) ou par des injecteurs |
 | hAP ax³ | **Routeur de la résidence** : pare-feu, WireGuard, OSPF, hotspot, QoS, DHCP/DNS, Wi-Fi 6 (SSID → VLAN), contrôleur CAPsMAN des futurs cAP ax. Ses 5 ports suffisent : 1 vers la box, 1 trunk vers le switch VLAN, les autres en réserve |
 | RB941 hAP lite (×2) | Lab de test des configs ; ou routeur d'un petit site futur ; ou routeur 4G de secours avec clé USB |
 | MANTBox | AP du hotspot sur le VLAN 70 (portail sur le hAP ax³) |
@@ -54,9 +55,17 @@ Détection Frigate au bureau : si le Xeon du Dell n'a pas d'iGPU → **Coral USB
 
 ## Priorités d'achat (budget étalé)
 
-1. Switch PoE VLAN résidence : avec le **hAP ax³ déjà en place**, il suffit pour **isoler le hotspot et les proches** (risque n° 1).
-2. Disques vidéo résidence.
+1. **Rien à acheter pour isoler hotspot et proches** : hAP ax³ + HPE 1920 suffisent (risque n° 1).
+2. Disques vidéo résidence (+ PoE pour caméras si le 1920 n'est pas PoE).
 3. RB5009 bureau, switch PoE VLAN bureau, disques vidéo bureau.
 4. Onduleurs.
 5. VPS hub (secours + nomades).
 6. AP cAP ax, secours 4G.
+
+## Notes HPE OfficeConnect 1920
+
+- Administration par l'interface web ; la CLI complète est limitée (mode caché `_cmdline-mode on`).
+- Firmware Comware en fin de vie : on le met à jour une dernière fois, et l'interface
+  d'administration n'est joignable **que depuis le VLAN ADMIN** (IP de management dans `10.1.10.0/24`).
+- SNMP v3 activé pour Zabbix ; LLDP pour la cartographie.
+- Ne pas confondre avec le **1920S** (autre système, autre interface).

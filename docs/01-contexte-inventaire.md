@@ -30,6 +30,7 @@ transit entre la box et le MikroTik et n'est jamais routé entre les sites.
 | ASUS RT-AC5300 | 1 | Bon Wi-Fi, VLAN limités | Point d'accès (mode AP) transitoire, puis retrait |
 | Netgear R6220 | 2 | Faible | Retrait (ou AP invités transitoire) |
 | MikroTik **hAP ax³** (C53UiG+5HPaxD2HPaxD) | 1 | 4 cœurs ARM64 1,8 GHz, 1 Go RAM, 1× 2,5 GbE + 4× GbE, Wi-Fi 6, USB 3, RouterOS v7 | **Routeur / pare-feu de la résidence** + Wi-Fi + contrôleur CAPsMAN |
+| **HPE OfficeConnect 1920** (modèle exact à préciser) | 1 | Switch *smart* administrable : 802.1Q (VLAN), LACP, SNMP v3, LLDP, QoS, miroir de port ; firmware Comware, en fin de vie | **Switch cœur VLAN de la résidence** |
 | MikroTik RB941-2nD (hAP lite) | 2 | CPU faible, ports 100 Mb/s | Lab / petit site secondaire / LTE de secours |
 | Points d'accès Tenda | ? | Pas de VLAN par SSID | Retrait progressif |
 | TP-Link TL-SG1008M (non administrable) | 5 | OK en switch de bord mono-VLAN | Switch d'extrémité (ex. grappe de caméras sur un port *access*) |
