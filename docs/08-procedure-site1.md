@@ -6,6 +6,24 @@ L'ancien routeur reste à portée de main pour un retour arrière.
 
 Il faut un PC avec **WinBox 4** et un navigateur, et 3 câbles réseau.
 
+## Étape 0 — Câblage de préparation (sans gêner la maison)
+
+> ⚠️ Le hAP ax³ sorti de carton fait serveur DHCP `192.168.88.x` sur ether2–5. S'il est
+> branché au switch de la maison par l'un de ces ports, **le débrancher tout de suite**
+> (les appareils de la maison risquent de recevoir une mauvaise adresse). Si un appareil a
+> déjà reçu une adresse `192.168.88.x`, le débrancher puis le rebrancher.
+
+```
+Switch de la maison ──── ether1 (WAN) hAP ax³ ether4 ──── PC d'administration
+   (192.168.1.x)          192.168.1.2                    (10.1.10.2xx, Internet via le hAP)
+```
+
+- **ether1** du hAP ax³ → switch de la maison : il sort sur Internet par la box (`192.168.1.254`).
+- **PC** → **ether4** du hAP ax³ : il garde Internet (via le hAP) pendant toute la préparation.
+- Avant l'import : vérifier que **`192.168.1.2` est libre** (`ping 192.168.1.2` depuis le PC,
+  et la page DHCP de la box) et hors de la plage DHCP de la box ; sinon, changer l'adresse
+  dans le script.
+
 ## Étape 1 — hAP ax³
 
 1. Brancher le PC sur **ether4**, ouvrir WinBox, se connecter par **adresse MAC**.
@@ -26,7 +44,8 @@ Il faut un PC avec **WinBox 4** et un navigateur, et 3 câbles réseau.
 
 ## Étape 2 — HPE 1920 (interface web)
 
-1. Relier le **port 5** du switch à **ether4** du hAP ax³ (accès ADMIN, provisoirement).
+1. Retirer le HPE de derrière le Netgear (la caméra PoE sera coupée le temps de la configuration).
+   Relier le **port 5** du switch à **ether5** du hAP ax³ (accès ADMIN, provisoirement).
    Le switch est client DHCP par défaut : son IP apparaît dans
    **IP → DHCP Server → Leases** du hAP ax³ (`10.1.10.2xx`).
 2. Navigateur → `http://10.1.10.2xx` → compte `admin`, mot de passe vide (par défaut).
@@ -48,7 +67,7 @@ Il faut un PC avec **WinBox 4** et un navigateur, et 3 câbles réseau.
    | **5 (en dernier)** | Trunk | 1 | — | 10–80 |
 
    Retirer le VLAN 1 non tagué des ports *hybrid*. Au passage du port 5 en trunk, la
-   connexion coupe : **déplacer le câble du port 5 de ether4 vers ether2** du hAP ax³ et
+   connexion coupe : **déplacer le câble du port 5 de ether5 vers ether2** du hAP ax³ et
    rejoindre le switch sur `10.1.10.2` (PC toujours sur ether4).
 7. Retirer l'adresse de **Vlan-interface 1** (management uniquement par VLAN 10).
 8. **Device → Users** : mot de passe admin fort. **Device → SNMP** : v3 uniquement,
@@ -67,13 +86,11 @@ Brancher un PC successivement sur chaque type de port et vérifier :
 | hAP ether4 | IP `10.1.10.2xx`, accès WinBox `10.1.10.1` et web switch `10.1.10.2` |
 | HPE port 1 (CAM) | IP `10.1.50.x`, **pas d'Internet**, pas d'accès à `10.1.10.1` |
 | HPE port 6 (HOTSPOT) | IP `10.1.70.x` ou `10.1.71.x`, **page de connexion** au 1er site web ; après connexion : Internet, rien d'autre |
-| HPE port 7 (RELAIS) | IP `10.1.80.x`, Internet, **aucun accès** à `10.1.x` |
+| HPE port 7 (RELAIS) | IP `192.168.20.1xx`, Internet, **aucun accès** à `10.1.x` ni à `192.168.1.x` |
 | HPE port SFP 2 (USERS) | IP `10.1.30.x`, Internet |
 | Wi-Fi « Maison » / « Maison-IoT » / « Maison-Invites » | `10.1.30.x` / `10.1.40.x` / `10.1.60.x` ; invités isolés entre eux |
 
-Pour les tests Internet sur table, ether1 peut être branché sur la box **en plus** de l'ancien
-routeur (port LAN libre de la box). Le hAP ax³ prend `192.168.1.2` : vérifier avant que cette
-adresse est libre (hors plage DHCP de la box).
+Pendant les tests, le hAP ax³ sort sur Internet par son ether1, branché au switch de la maison (étape 0).
 
 ## Étape 4 — Bascule
 
@@ -82,18 +99,25 @@ adresse est libre (hors plage DHCP de la box).
 3. **MANTBox** (risque n° 1) : sauvegarder sa config, la passer en **simple point d'accès en
    pont** (portail captif désactivé ; le hotspot tourne désormais sur le hAP ax³) avec isolation
    des clients, puis la brancher (avec son injecteur) sur le **port 6**.
-4. **NanoBeam** : la brancher (avec son injecteur) sur le **port 7**. Le trafic des proches
-   arrive non tagué → VLAN 80, sans rien toucher sur les CPE.
+4. **NanoBeam** : la débrancher du Xiaomi et l'éteindre (le Xiaomi aussi : sinon deux
+   serveurs DHCP `192.168.20.x`). La brancher (avec son injecteur) sur le **port 7**. Le
+   hAP ax³ reprend l'adresse `192.168.20.5` et le DHCP : chez les proches, rien ne change.
+   Si des CPE ont une IP fixe en `192.168.20.x`, les ajouter en baux statiques pour éviter
+   les doublons.
    Ensuite, sur chaque radio (NanoBeam, LiteAP, Loco) : activer le **VLAN de management 10**
    et une IP fixe `10.1.10.3x`, une radio à la fois, en commençant par la plus éloignée.
-5. Caméras : sur les ports 1–4 et sur le switch TP-Link du port SFP 1 ; noter leurs baux
+5. Caméras : retirer le Netgear ; caméras sur les ports 1–4 et sur le switch TP-Link du port SFP 1 ; noter leurs baux
    (`10.1.50.5x+`) puis les passer en **baux statiques** `10.1.50.10–49`.
-6. Proxmox : passer `vmbr0` en *VLAN aware* ; IP de gestion sur `vmbr0.20` (`10.1.20.10`, Dell) ;
-   le Ryzen (ether3 du hAP ax³) fera de même avec une IP en `10.1.20.11`.
-7. Ajuster les plafonds `q-hotspot` et `q-relais` d'après le débit montant réel (voir les tests de débit de la box).
-8. Retirer l'ancien routeur ; sauvegarde `res-rtr-01-j1`.
+6. Proxmox Dell : **avant** de le déplacer, passer `vmbr0` en *VLAN aware* et préparer l'IP de
+   gestion sur `vmbr0.20` (`10.1.20.10`) ; puis le brancher sur le **port 8** du HPE.
+   Le Ryzen (ether3 du hAP ax³) fera de même avec une IP en `10.1.20.11`.
+7. Switch de la maison (PC, imprimante, TV) : le relier au **port SFP 2** (VLAN 30) au lieu de
+   la box. Le PC d'administration passe sur ether4 du hAP ax³ (VLAN 10).
+   La box n'a alors plus qu'un câble : celui vers ether1 du hAP ax³.
+8. Ajuster les plafonds `q-hotspot` et `q-relais` d'après le débit montant réel (voir les tests de débit de la box).
+9. Retirer le Xiaomi et le Netgear ; sauvegarde `res-rtr-01-j1`.
 
 ## Retour arrière
 
-Rebrancher l'ancien routeur sur la box et y remettre les câbles de la MANTBox et de la NanoBeam.
+Rebrancher le Xiaomi (NanoBeam) et le Netgear (HPE + caméra) sur la box, et le switch de la maison directement sur la box.
 La configuration du hAP ax³ n'est pas perdue et la bascule pourra être retentée.

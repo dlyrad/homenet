@@ -24,7 +24,13 @@ Chaque site dispose d'un `/16` résumable (une seule route OSPF par site).
 | 50 | CAM | `10.N.50.0/24` | `.1` | Réservations |
 | 60 | GUEST | `10.N.60.0/24` | `.1` | `.50–.250`, isolé |
 | 70 | HOTSPOT | `10.N.70.0/23` | `.1` | `10.N.70.10`–`10.N.71.250`, portail captif, isolé |
-| 80 | RELAIS | `10.N.80.0/24` | `.1` | Réservations par CPE de proche, isolé |
+| 80 | RELAIS | `10.N.80.0/24` — **site 1 : `192.168.20.0/24`** (voir ci-dessous) | `.1` (site 1 : `.5`) | Réservations par CPE de proche, isolé |
+
+**Exception site 1 — RELAIS** : on conserve le réseau actuel des proches, `192.168.20.0/24`
+(passerelle `192.168.20.5`, l'ancienne adresse du routeur Xiaomi). La bascule se fait ainsi
+sans rien reconfigurer chez eux. Ce VLAN ne sort jamais du site et n'est jamais routé vers
+les autres sites, donc pas de conflit possible. Renumérotation en `10.1.80.0/24` plus tard,
+si besoin.
 
 Les VLAN 70 et 80 n'existent aujourd'hui qu'à la résidence. HOTSPOT est un `/23` pour
 accueillir plus de 250 clients.
@@ -33,6 +39,8 @@ Le lien box FAI ↔ routeur reste sur le LAN de la box : `192.168.1.0/24` sur **
 sites**. C'est sans conséquence, car ce réseau n'est pas routé entre les sites. **Ne jamais
 réutiliser** `192.168.0.0/16` en interne. Le MikroTik prend une IP fixe (ex. `192.168.1.2`,
 hors du DHCP de la box) et est placé en **DMZ** de la box.
+
+Passerelles des box : résidence (Yas/Togocom) = `192.168.1.254` ; bureau (Canalbox) = à relever.
 
 ## Tunnels
 

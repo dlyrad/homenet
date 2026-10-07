@@ -13,7 +13,7 @@
 #   5. /import file-name=res-rtr-01.secrets.rsc   puis supprimer ce fichier du routeur
 #
 # Ports :
-#   ether1 (2,5 GbE) = WAN vers box Yas (192.168.1.2/24, à mettre en DMZ sur la box)
+#   ether1 (2,5 GbE) = WAN vers box Yas (192.168.1.2/24, passerelle 192.168.1.254, DMZ)
 #   ether2           = trunk vers HPE 1920 port 5 (VLAN 10..80 tagués)
 #   ether3           = Proxmox Ryzen (trunk 10, 20, 50 tagués)
 #   ether4, ether5   = accès ADMIN (VLAN 10 non tagué)
@@ -97,10 +97,10 @@ add list=Z-INTERNET interface=vl70-hotspot
 add list=Z-INTERNET interface=vl80-relais
 
 # --- WAN ----------------------------------------------------------------------
-# Adresse fixe sur le LAN de la box (hors de sa plage DHCP), à placer en DMZ.
-# Vérifier l'IP de la box (192.168.1.1 supposée).
+# Box Togocom/Yas = 192.168.1.254. Adresse fixe du hAP : 192.168.1.2, à vérifier libre
+# et hors de la plage DHCP de la box, puis à placer en DMZ.
 /ip address add address=192.168.1.2/24 interface=ether1 comment="WAN box Yas"
-/ip route add dst-address=0.0.0.0/0 gateway=192.168.1.1 comment="Défaut via box Yas"
+/ip route add dst-address=0.0.0.0/0 gateway=192.168.1.254 comment="Défaut via box Yas"
 
 # --- Adressage interne (site 1 = 10.1.0.0/16) ---------------------------------
 /ip address
@@ -111,7 +111,10 @@ add address=10.1.40.1/24 interface=vl40-iot
 add address=10.1.50.1/24 interface=vl50-cam
 add address=10.1.60.1/24 interface=vl60-guest
 add address=10.1.70.1/23 interface=vl70-hotspot
-add address=10.1.80.1/24 interface=vl80-relais
+# RELAIS : on reprend le réseau actuel des proches (ex-routeur Xiaomi, 192.168.20.5)
+# pour une bascule sans rien toucher chez eux. Exception assumée au plan 10.1.x :
+# ce VLAN ne sort jamais du site. Renumérotation en 10.1.80.0/24 possible plus tard.
+add address=192.168.20.5/24 interface=vl80-relais
 
 # --- DNS ----------------------------------------------------------------------
 /ip dns set allow-remote-requests=yes servers=1.1.1.1,9.9.9.9 cache-size=4096KiB
@@ -127,7 +130,7 @@ add name=pool-iot ranges=10.1.40.50-10.1.40.250
 add name=pool-cam ranges=10.1.50.50-10.1.50.250
 add name=pool-guest ranges=10.1.60.50-10.1.60.250
 add name=pool-hotspot ranges=10.1.70.10-10.1.71.250
-add name=pool-relais ranges=10.1.80.50-10.1.80.250
+add name=pool-relais ranges=192.168.20.100-192.168.20.250 comment="Aligner sur la plage DHCP actuelle du Xiaomi"
 
 /ip dhcp-server
 add name=dhcp-admin interface=vl10-admin address-pool=pool-admin lease-time=1h comment="Dépannage uniquement"
@@ -147,7 +150,7 @@ add address=10.1.40.0/24 gateway=10.1.40.1 dns-server=10.1.40.1 ntp-server=10.1.
 add address=10.1.50.0/24 gateway=10.1.50.1 dns-server=10.1.50.1 ntp-server=10.1.50.1
 add address=10.1.60.0/24 gateway=10.1.60.1 dns-server=10.1.60.1
 add address=10.1.70.0/23 gateway=10.1.70.1 dns-server=10.1.70.1
-add address=10.1.80.0/24 gateway=10.1.80.1 dns-server=10.1.80.1
+add address=192.168.20.0/24 gateway=192.168.20.5 dns-server=192.168.20.5
 
 # --- Partage du débit (hotspot et proches) ------------------------------------
 # max-limit = montant/descendant (vu des clients). Valeurs de départ ≈ 40 % d'un
@@ -158,7 +161,7 @@ add name=pcq-down kind=pcq pcq-classifier=dst-address
 
 /queue simple
 add name=q-hotspot target=10.1.70.0/23 max-limit=6M/40M comment="HOTSPOT : plafond global (parent des files par client)"
-add name=q-relais target=10.1.80.0/24 max-limit=6M/40M queue=pcq-up/pcq-down comment="RELAIS : plafond global, partage équitable par CPE"
+add name=q-relais target=192.168.20.0/24 max-limit=6M/40M queue=pcq-up/pcq-down comment="RELAIS : plafond global, partage équitable par CPE"
 # Pas de fasttrack : il contournerait ces files d'attente. Le CPU du hAP ax³ suffit à 200 Mb/s.
 
 # --- Hotspot (portail captif sur le routeur ; la MANTBox devient un simple AP) -

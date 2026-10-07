@@ -45,18 +45,35 @@ transit entre la box et le MikroTik et n'est jamais routé entre les sites.
 | NVR sans marque (Tuya/Smart Life) | ≥2 | Capacité disque à vérifier | Enregistrement 24/7 local, ou remplacés par Frigate |
 | Objets connectés Tuya / Google Assistant | ? | Dépendants du cloud | VLAN IoT |
 
-## Partage de connexion existant (résidence)
+## Topologie actuelle de la résidence (relevé du 2026-10-07)
 
 ```
-Box Yas ── réseau résidence ──┬── MANTBox ··· clients du hotspot (portail captif)
-                              └── NanoBeam ···radio··· point relais
-                                                       ├── LiteAP AC ··· LiteBeam/Loco des proches
-                                                       └── Loco AC   ··· LiteBeam/Loco des proches
+Box Togocom/Yas 192.168.1.254  (LAN 192.168.1.0/24)
+ ├── Switch non administrable
+ │     ├── PC d'administration      192.168.1.66
+ │     ├── Imprimante
+ │     ├── Télévision
+ │     ├── Serveur Dell (Proxmox)
+ │     └── hAP ax³ (branché pour préparation)
+ ├── Routeur Xiaomi  → LAN 192.168.20.0/24 (192.168.20.5)
+ │     └── NanoBeam ···radio··· point relais (LiteAP AC, Loco AC) ··· CPE des proches (192.168.20.x)
+ ├── Routeur Netgear R6220 → LAN 10.0.0.0/24 (10.0.0.1)
+ │     └── HPE 1920-8G-PoE+ → 1 caméra PoE
+ └── MANTBox (hotspot) : emplacement à préciser
 ```
 
-Constat : ces utilisateurs **externes** partagent aujourd'hui, très probablement, le même
-réseau que les équipements de la maison (serveurs, caméras). C'est le premier risque à
-corriger (voir [02-architecture.md](02-architecture.md), zones HOTSPOT et RELAIS).
+Constats :
+- Proches et caméra sont derrière un **NAT** (Xiaomi, Netgear) : ils ne sont pas joignables
+  depuis la maison, **mais eux peuvent joindre `192.168.1.x`** (PC, Dell, imprimante, TV),
+  car pour le Xiaomi et le Netgear, ce réseau est simplement « l'extérieur ». C'est le risque n° 1.
+- Triple NAT pour les proches et la caméra, trois routeurs à administrer séparément, aucune
+  supervision centralisée.
+- Cible : le hAP ax³ remplace la box comme routeur interne, et le Xiaomi et le Netgear disparaissent.
+  Le réseau des proches `192.168.20.0/24` est **conservé** dans le VLAN 80 (bascule sans
+  intervention chez eux).
+- Le hAP ax³ **sorti de carton** a une configuration par défaut avec un serveur DHCP
+  `192.168.88.x` sur ether2–5 : **ne jamais le relier au switch de la maison par ether2–5**
+  avant la remise à zéro (il distribuerait de mauvaises adresses à tout le réseau).
 
 Il n'y a pas de liaison radio résidence ↔ bureau (obstacles) : l'interconnexion passe
 uniquement par Internet.

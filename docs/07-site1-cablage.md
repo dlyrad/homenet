@@ -24,9 +24,9 @@ Matériel : box Yas → **hAP ax³** (routeur) → **HPE 1920-8G-PoE+ JG921A** (
 | 5 | — | Trunk ← hAP ax³ ether2 | tagged tous VLAN |
 | 6 | — | MANTBox (via son injecteur) | access VLAN 70 |
 | 7 | — | NanoBeam (via son injecteur) | **hybrid** : 80 non tagué (trafic des proches, aucune config sur les CPE) + 10 tagué (management des radios) |
-| 8 | — | Proxmox Dell | trunk tagged 10,20 |
+| 8 | — | Proxmox Dell (aujourd'hui sur le switch de la maison) | trunk tagged 10,20 |
 | SFP 1 | — | Module SFP→RJ45 1000BASE-T → switch PoE TP-Link (autres caméras) | access VLAN 50 |
-| SFP 2 | — | Module SFP→RJ45 → switch TP-Link (postes filaires) | access VLAN 30 |
+| SFP 2 | — | Module SFP→RJ45 → **switch actuel de la maison** (PC, imprimante, TV) | access VLAN 30 |
 
 Management du switch : IP `10.1.10.2` sur le VLAN 10 uniquement.
 
