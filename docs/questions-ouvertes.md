@@ -10,6 +10,9 @@
 | Q4 | Liaison radio résidence ↔ bureau ? | Non (obstacles) | Interconnexion uniquement par Internet |
 | Q5 | CGNAT ? | Non : IP publique sur la box, LAN `192.168.1.x` | Tunnels directs + DDNS ; VPS en secours |
 | Q8 | Rétention vidéo | ≥ 3 semaines | 0,5–1 To par caméra en continu, stockage par site |
+| Q17 | Version RouterOS du hAP ax³ | 7.23.7 (long-term) | Script `configs/res-rtr-01.rsc` |
+| Q18 | Où tourne le portail captif ? | *Par défaut* : sur le hAP ax³ (option A) | À confirmer |
+| Q19 | Débit réservé hotspot/proches | *Par défaut* : 6/40 Mb/s chacun, 2/6 Mb/s par client hotspot | À ajuster après mesure |
 
 ## À trancher
 

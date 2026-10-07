@@ -17,7 +17,7 @@ Chaque site dispose d'un `/16` résumable (une seule route OSPF par site).
 
 | VLAN | Nom | Sous-réseau (site N) | Passerelle | DHCP |
 |---|---|---|---|---|
-| 10 | ADMIN | `10.N.10.0/24` | `.1` | Non (IP fixes) |
+| 10 | ADMIN | `10.N.10.0/24` | `.1` | IP fixes ; petite plage `.200–.219` pour le dépannage |
 | 20 | SERV | `10.N.20.0/24` | `.1` | Réservations |
 | 30 | USERS | `10.N.30.0/24` | `.1` | `.100–.250` |
 | 40 | IOT | `10.N.40.0/24` | `.1` | `.50–.250` |

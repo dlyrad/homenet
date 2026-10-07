@@ -110,8 +110,9 @@ probablement sur le même réseau que la maison. Cible :
     tard User Manager pour les tickets/comptes). Une seule configuration à gérer, et
     les comptes ainsi que les journaux sont centralisés.
   - *Option B* : la MANTBox garde son portail ; elle est simplement isolée sur le VLAN 70.
-- **VLAN 80 RELAIS** — la NanoBeam et les radios du point relais passent ce VLAN de bout
-  en bout (airMAX en mode pont, VLAN transparent). Chaque CPE de proche reçoit une IP
+- **VLAN 80 RELAIS** — le port de la NanoBeam est en *hybrid* : VLAN 80 **non tagué** (le
+  trafic des proches y arrive sans aucune config sur leurs CPE) + VLAN 10 tagué pour le
+  management des radios. Chaque CPE de proche reçoit une IP
   en DHCP du routeur de la résidence. Les radios Ubiquiti elles-mêmes sont administrées sur le VLAN
   **ADMIN** (VLAN de management des airMAX).
 - **Partage du débit (QoS)** — le montant (10–50 Mb/s) est partagé entre vos usages, les

@@ -1,0 +1,5 @@
+# Secrets réels : jamais dans Git
+*.secrets.rsc
+*.backup
+*.key
+.env
