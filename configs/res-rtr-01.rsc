@@ -247,7 +247,7 @@ add name=wifi2-invites master-interface=wifi2 configuration=cfg-invites disabled
 /ip neighbor discovery-settings set discover-interface-list=Z-ADMIN
 /snmp community set [find name=public] disabled=yes
 # Groupe limite pour Mikhmon (gestion des tickets via API, etape B)
-/user group add name=mikhmon policy=read,write,api,test,sensitive comment="Mikhmon : tickets hotspot"
+/user group add name=mikhmon policy=read,write,policy,test,api,sensitive comment="Mikhmon : tickets hotspot (scripts et planificateurs)"
 
 # --- Activation du filtrage VLAN (en dernier) ---------------------------------
 # La session WinBox-MAC peut etre coupee ici : se reconnecter sur 10.1.10.1 via ether4.

@@ -190,7 +190,7 @@ Pendant les tests, le hAP ax³ sort sur Internet par son ether1, branché au swi
 ## Étape B — Hotspot sur le hAP ax³ + Mikhmon (plus tard)
 
 Mikhmon gère les tickets via l'**API RouterOS** (port TCP 8728) : il suffit de le faire pointer
-vers le hAP ax³ au lieu de la MANTBox.
+vers le hAP ax³ au lieu de la MANTBox. Détails, droits et précautions : [09-mikhmon.md](09-mikhmon.md).
 
 1. **Exporter depuis la MANTBox** (avant toute réinitialisation) :
    ```

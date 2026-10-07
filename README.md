@@ -21,6 +21,7 @@ sites supplémentaires. Objectifs :
 | [docs/06-plan-migration.md](docs/06-plan-migration.md) | Phases de mise en œuvre |
 | [docs/07-site1-cablage.md](docs/07-site1-cablage.md) | Résidence : affectation des ports hAP ax³ et HPE 1920 |
 | [docs/08-procedure-site1.md](docs/08-procedure-site1.md) | Résidence : préparation sur table, HPE 1920, tests, bascule |
+| [docs/09-mikhmon.md](docs/09-mikhmon.md) | Mikhmon : état, raccordement au hAP ax³, hébergement, version améliorée |
 | [configs/res-rtr-01.rsc](configs/res-rtr-01.rsc) | Configuration du hAP ax³ (sans secrets) |
 | [docs/questions-ouvertes.md](docs/questions-ouvertes.md) | Points à trancher |
 
