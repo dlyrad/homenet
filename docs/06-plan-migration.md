@@ -4,9 +4,12 @@ Chaque phase est réversible et laisse le réseau existant fonctionnel.
 
 ## Phase 0 — Inventaire et mesures
 - [ ] Recenser chaque équipement (site, emplacement, MAC, IP actuelle, usage) → NetBox.
-- [ ] Vérifier CGNAT sur chaque box (IP WAN de la box ≠ IP vue sur un site « what is my IP » → CGNAT).
-- [ ] Mesurer latence depuis chaque site vers des VPS candidats (Paris, Marseille, Francfort…).
-- [ ] Tester sur 2–3 caméras l'accès **RTSP/ONVIF** local (VLC, ONVIF Device Manager).
+- [x] Vérifier le CGNAT : les box ont une IP publique (dynamique) → tunnels directs possibles.
+- [ ] Vérifier que chaque box accepte une **DMZ** ou une redirection UDP.
+- [ ] Mesurer la latence depuis chaque site vers des VPS candidats (Paris, Marseille, Francfort…).
+- [ ] Avec **ONVIF Device Manager**, relever pour 2–3 caméras l'URL RTSP, le codec (H.264/H.265), la résolution et le débit des flux principal et secondaire.
+- [ ] Relever le nombre de caméras par site, et la capacité disque et la compatibilité ONVIF des NVR.
+- [ ] Cartographier le partage de connexion : position du point relais, nombre de proches et de clients du hotspot, modèles des CPE.
 
 ## Phase 1 — Hub et lab
 - [ ] Louer le VPS, installer CHR (ou Debian + WireGuard + FRR), durcir (SSH clé, pare-feu).
@@ -15,16 +18,19 @@ Chaque phase est réversible et laisse le réseau existant fonctionnel.
 
 ## Phase 2 — Site 1 (résidence)
 - [ ] Installer le RB5009 derrière la box (DMZ si possible), VLAN, DHCP, DNS, pare-feu par zone.
+- [ ] **Priorité** : basculer la MANTBox sur le VLAN 70 et la NanoBeam/le relais sur le VLAN 80 + QoS — les tiers sortent du réseau de la maison.
 - [ ] Switch PoE VLAN ; migration **VLAN par VLAN** : ADMIN → SERV → USERS → IOT → CAM → GUEST.
 - [ ] Tunnel vers le hub ; supervision de base (Uptime Kuma sur VPS).
 
 ## Phase 3 — Site 2 (bureau)
 - [ ] Même config type (seul l'ID de site change).
-- [ ] OSPF : vérifier que `10.1.0.0/16` et `10.2.0.0/16` se voient via le hub.
-- [ ] Tunnel direct opportuniste si l'un des sites est joignable.
+- [ ] Tunnel WireGuard direct résidence ↔ bureau (IP Cloud + script de mise à jour de l'endpoint).
+- [ ] OSPF : vérifier que `10.1.0.0/16` et `10.2.0.0/16` se voient ; tester la bascule via le hub.
 
 ## Phase 4 — Vidéo et supervision
-- [ ] Frigate sur le Ryzen : caméras locales en flux principal, distantes en sous-flux.
+- [ ] Couper Internet au VLAN CAM ; vérifier que les flux RTSP/ONVIF fonctionnent toujours.
+- [ ] Frigate résidence (Ryzen) et bureau (Dell) : caméras locales enregistrées, caméras distantes en sous-flux.
+- [ ] Accès distant aux caméras par le VPN nomade (téléphone).
 - [ ] Zabbix/Grafana/NetBox/Loki ; alertes Telegram.
 - [ ] Onduleurs + NUT.
 

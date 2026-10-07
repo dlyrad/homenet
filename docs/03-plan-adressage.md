@@ -23,19 +23,34 @@ Chaque site dispose d'un `/16` résumable (une seule route OSPF par site).
 | 40 | IOT | `10.N.40.0/24` | `.1` | `.50–.250` |
 | 50 | CAM | `10.N.50.0/24` | `.1` | Réservations |
 | 60 | GUEST | `10.N.60.0/24` | `.1` | `.50–.250`, isolé |
+| 70 | HOTSPOT | `10.N.70.0/23` | `.1` | `10.N.70.10`–`10.N.71.250`, portail captif, isolé |
+| 80 | RELAIS | `10.N.80.0/24` | `.1` | Réservations par CPE de proche, isolé |
 
-Le lien box FAI ↔ routeur reste sur le LAN de la box (ex. `192.168.1.0/24` Canalbox,
-selon box) : **ne jamais réutiliser** ces plages en interne. Mettre si possible
-l'adresse du MikroTik en **DMZ** de la box (améliore le NAT pour WireGuard).
+Les VLAN 70 et 80 n'existent aujourd'hui qu'à la résidence. HOTSPOT est un `/23` pour
+accueillir plus de 250 clients.
+
+Le lien box FAI ↔ routeur reste sur le LAN de la box : `192.168.1.0/24` sur **les deux
+sites**. C'est sans conséquence, car ce réseau n'est pas routé entre les sites. **Ne jamais
+réutiliser** `192.168.0.0/16` en interne. Le MikroTik prend une IP fixe (ex. `192.168.1.2`,
+hors du DHCP de la box) et est placé en **DMZ** de la box.
 
 ## Tunnels
 
 | Tunnel | Sous-réseau | Extrémités |
 |---|---|---|
-| Hub ↔ Résidence | `10.255.1.0/30` | hub `.1`, site `.2` |
-| Hub ↔ Bureau | `10.255.2.0/30` | hub `.1`, site `.2` |
-| Résidence ↔ Bureau (direct) | `10.255.12.0/30` | site1 `.1`, site2 `.2` |
-| Loopback routeur site N | `10.255.255.N/32` | identifiant OSPF |
+| Résidence ↔ Bureau (direct, principal) | `10.255.1.8/30` | site 1 `.9`, site 2 `.10` |
+| Hub ↔ Résidence (secours) | `10.255.0.4/30` | hub `.5`, site `.6` |
+| Hub ↔ Bureau (secours) | `10.255.0.8/30` | hub `.9`, site `.10` |
+| Loopback routeur site N | `10.255.255.N/32` | identifiant OSPF (router-id) |
+
+Conventions (sans collision jusqu'à 63 sites) :
+- hub ↔ site N → `10.255.0.(4×N)/30` (hub = 1re IP, site = 2e) ;
+- direct site A ↔ site B (A < B) → `10.255.A.(4×B)/30` (A = 1re IP, B = 2e).
+
+| Port WireGuard | Usage |
+|---|---|
+| UDP 13231 | Tunnels inter-sites (DMZ ou redirection sur la box) |
+| UDP 13232 | Accès nomades (sur le hub) |
 
 ## Adresses réservées dans chaque VLAN
 
@@ -49,5 +64,5 @@ l'adresse du MikroTik en **DMZ** de la box (améliore le NAT pour WireGuard).
 ## Nommage
 
 `<site>-<type>-<nn>` avec site = `res`, `bur`, … ; type = `rtr`, `sw`, `ap`, `pve`,
-`nvr`, `cam`, `ups`. Ex. `res-rtr-01`, `bur-cam-07`. Domaine DNS interne :
+`nvr`, `cam`, `ups`, `ptp` (radio point-à-point), `sec` (secteur radio), `cpe`. Ex. `res-rtr-01`, `bur-cam-07`. Domaine DNS interne :
 `<site>.home.arpa` (ex. `bur-cam-07.bur.home.arpa`).

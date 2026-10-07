@@ -19,7 +19,7 @@ supervision SNMP) — une seule syntaxe (RouterOS v7) sur tous les sites et le h
 |---|---|---|
 | VPS hub | 1 vCPU / 1–2 Go RAM, IP v4 fixe, Europe de l'Ouest | ~4–6 €/mois |
 | Licence MikroTik CHR | P1 (1 Gb/s) | ~45 $ une fois (ou Debian + WireGuard, gratuit) |
-| Stockage vidéo | Disque(s) de surveillance 2–4 To pour le Ryzen (Frigate) | selon rétention |
+| Stockage vidéo | Voir « Stockage vidéo » ci-dessous | selon nombre de caméras par site |
 
 ## Réutilisation de l'existant
 
@@ -27,11 +27,35 @@ supervision SNMP) — une seule syntaxe (RouterOS v7) sur tous les sites et le h
 |---|---|
 | TL-SG1008M (×5) | Switchs d'extrémité **mono-VLAN** branchés sur un port *access* (ex. un groupe de caméras non-PoE, un bureau) |
 | RB941 hAP lite (×2) | Lab de test des configs ; ou routeur d'un petit site futur ; ou routeur 4G de secours avec clé USB |
-| MANTBox / NanoBeam / LiteAP AC / Loco AC | Liaisons radio (à confirmer : existe-t-il une liaison radio entre bâtiments / vers un site proche ?) — elles transportent alors un trunk VLAN |
+| MANTBox | AP du hotspot sur le VLAN 70 (portail sur le RB5009) |
+| NanoBeam → LiteAP AC + Loco AC | Pont radio vers le point relais, qui transporte VLAN 80 (proches) + VLAN de management (ADMIN) |
 | ASUS RT-AC5300 | AP transitoire pendant la migration, puis retrait |
 | Netgear R6220, Xiaomi, Tenda | Retrait (pas de VLAN par SSID, firmwares fermés) |
-| Proxmox Dell (×2) | Un par site : DNS interne, contrôleur/exporters, sauvegardes croisées |
+| Proxmox Dell (×2) | Un par site : DNS interne, sauvegardes croisées ; celui du bureau fait aussi tourner Frigate (bureau) |
 | Ryzen AI 9 HX470 | Proxmox : **Frigate** (détection accélérée iGPU/NPU) + **supervision centrale** |
 
-> Priorité d'achat si budget étalé : 1) RB5009 résidence + VPS, 2) RB5009 bureau,
-> 3) switchs PoE VLAN, 4) onduleurs, 5) AP cAP ax, 6) secours 4G.
+## Stockage vidéo (rétention 3 semaines)
+
+Les mini-serveurs n'acceptent en général pas de disques 3,5". On ajoute donc par site :
+
+| Option | Matériel | Remarque |
+|---|---|---|
+| **A (recommandée)** | Boîtier DAS USB 3 / USB-C 2 baies + 2 disques **surveillance** (WD Purple / Seagate SkyHawk) de 8 To | Monté dans Proxmox, dédié à Frigate |
+| B | Réutiliser les disques des NVR existants (s'ils en ont) | Capacité souvent faible (1–4 To) |
+| C | NAS 2 baies (partage NFS) | Plus cher, mais mutualisable pour les sauvegardes |
+
+Taille à ajuster selon le nombre de caméras par site (voir le calcul dans
+[02-architecture.md](02-architecture.md) §6) : ~0,5–1 To par caméra pour 21 jours en
+continu, beaucoup moins en mode « continu sous-flux + événements en flux principal ».
+
+Détection Frigate au bureau : si le Xeon du Dell n'a pas d'iGPU → **Coral USB TPU**
+(~60 €) ou **Hailo-8L**.
+
+## Priorités d'achat (budget étalé)
+
+1. RB5009 résidence : il permet tout de suite d'**isoler hotspot et proches** (risque n° 1).
+2. Switch PoE VLAN résidence + disques vidéo résidence.
+3. RB5009 bureau, switch PoE VLAN bureau, disques vidéo bureau.
+4. Onduleurs.
+5. VPS hub (secours + nomades).
+6. AP cAP ax, secours 4G.

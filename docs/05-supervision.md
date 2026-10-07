@@ -17,6 +17,7 @@
 | **NetBox** | VM Proxmox | Source de vérité : sites, baies, équipements, IP, VLAN, câblage |
 | **Loki + Promtail** (ou Graylog) | VM Proxmox | Journaux syslog des routeurs (pare-feu, WireGuard, DHCP) |
 | **NUT** | Proxmox de chaque site | État des onduleurs, arrêt propre des serveurs |
+| **UISP** (Ubiquiti, gratuit, auto-hébergé) — optionnel | VM Proxmox | Gestion et supervision des radios airMAX (signal, capacité, firmware) ; sinon SNMP dans Zabbix |
 
 ## Indicateurs clés
 
@@ -24,7 +25,10 @@
   (dernier handshake), voisinage OSPF, latence/perte vers le hub.
 - Par équipement : joignabilité, CPU/RAM/température (routeurs, serveurs), ports switch
   (up/down, erreurs, PoE consommé).
-- Caméras : ping + test de flux RTSP ; espace disque NVR/Frigate.
+- Caméras : ping + test de flux RTSP ; espace disque NVR/Frigate ; rétention réelle (jours disponibles).
+- Radios (NanoBeam, LiteAP, Loco, CPE des proches) : signal (dBm), bruit, capacité/CCQ,
+  nombre de stations associées, débit par client.
+- Hotspot et proches : nombre de clients actifs, débit consommé par zone, part du montant utilisée.
 - Électricité : passage sur batterie, autonomie restante.
 
 ## Alertes

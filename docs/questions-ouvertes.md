@@ -1,13 +1,27 @@
 # Questions ouvertes
 
+## Tranchées
+
+| # | Question | Réponse | Conséquence |
+|---|---|---|---|
+| Q1 | Caméras RTSP/ONVIF ? | ONVIF | Frigate possible |
+| Q2 | Garder l'appli Tuya ? | Pas nécessaire | VLAN CAM coupé d'Internet, vue distante par VPN |
+| Q3 | Usage des radios | MANTBox = hotspot ; NanoBeam → relais LiteAP/Loco pour les proches | Zones HOTSPOT (70) et RELAIS (80) isolées + QoS |
+| Q4 | Liaison radio résidence ↔ bureau ? | Non (obstacles) | Interconnexion uniquement par Internet |
+| Q5 | CGNAT ? | Non : IP publique sur la box, LAN `192.168.1.x` | Tunnels directs + DDNS ; VPS en secours |
+| Q8 | Rétention vidéo | ≥ 3 semaines | 0,5–1 To par caméra en continu, stockage par site |
+
+## À trancher
+
 | # | Question | Impact |
 |---|---|---|
-| Q1 | Les caméras exposent-elles **RTSP/ONVIF** en local, ou uniquement Tuya cloud ? | Possibilité d'utiliser Frigate et de couper Internet aux caméras |
-| Q2 | Souhaitez-vous conserver l'appli **Tuya/Smart Life** pour la vidéo, ou basculer vers Frigate (+ accès via VPN) ? | Règles pare-feu VLAN CAM |
-| Q3 | À quoi servent aujourd'hui la **MANTBox, la NanoBeam, la LiteAP AC et les Loco AC** ? Existe-t-il une liaison radio entre bâtiments / avec un site proche ? | Topologie physique, trunk VLAN radio |
-| Q4 | Distance entre résidence et bureau ? Visibilité directe (radio possible) ? | Alternative/secours au tunnel Internet |
-| Q5 | Les box sont-elles derrière du **CGNAT** (IP WAN de la box ≠ IP publique vue de l'extérieur) ? | Faisabilité du tunnel direct |
-| Q6 | Quels services doivent être accessibles depuis Internet (hors VPN) ? | Publication via le VPS (reverse proxy) |
-| Q7 | Nombre d'utilisateurs / postes au bureau ? Besoin d'un Wi-Fi invités ? | Dimensionnement AP et VLAN GUEST |
-| Q8 | Rétention vidéo souhaitée (jours) ? | Taille des disques de surveillance |
-| Q9 | Préférence Zabbix vs LibreNMS (ou déjà une habitude) ? | Choix de la stack de supervision |
+| Q10 | Combien de caméras **par site** (résidence / bureau) ? | Taille des disques par site |
+| Q11 | Les NVR ont-ils des disques ? Quelle capacité ? Enregistrent-ils en ONVIF sans cloud ? | Garder les NVR en secours ou les retirer |
+| Q12 | Modèle exact des mini-serveurs Dell (ou modèle du Xeon) ? | iGPU pour Frigate au bureau, ou Coral à prévoir |
+| Q13 | Combien de clients sur le hotspot, combien de proches sur le relais ? Le hotspot est-il payant (tickets) ? | Taille des VLAN, User Manager, plafonds QoS |
+| Q14 | Le point relais (LiteAP/Loco) est-il chez quelqu'un ? A-t-il du courant secouru ? | Supervision et onduleur du relais |
+| Q15 | Les CPE des proches (LiteBeam/Loco) sont-ils à vous et administrables ? | Supervision complète ou simple ping |
+| Q16 | Les box acceptent-elles une **DMZ** ou une redirection UDP ? | Tunnel direct, sinon passage obligé par le VPS |
+| Q6 | Quels services doivent être accessibles depuis Internet hors VPN ? | Publication via le VPS (reverse proxy) |
+| Q7 | Nombre d'utilisateurs/postes au bureau ? | Dimensionnement des AP |
+| Q9 | Zabbix ou LibreNMS ? | Choix de la stack de supervision |
