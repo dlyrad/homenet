@@ -19,6 +19,7 @@ sites supplémentaires. Objectifs :
 | [docs/04-materiel.md](docs/04-materiel.md) | Matériel à acquérir / à réutiliser / à retirer |
 | [docs/05-supervision.md](docs/05-supervision.md) | Stack de supervision et d'alerte |
 | [docs/06-plan-migration.md](docs/06-plan-migration.md) | Phases de mise en œuvre |
+| [docs/07-site1-cablage.md](docs/07-site1-cablage.md) | Résidence : affectation des ports hAP ax³ et HPE 1920 |
 | [docs/questions-ouvertes.md](docs/questions-ouvertes.md) | Points à trancher |
 
 ## Règles du dépôt
