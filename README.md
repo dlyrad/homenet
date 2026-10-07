@@ -14,7 +14,7 @@ sites supplémentaires. Objectifs :
 | Document | Contenu |
 |---|---|
 | [docs/01-contexte-inventaire.md](docs/01-contexte-inventaire.md) | Contraintes FAI, inventaire matériel existant |
-| [docs/02-architecture.md](docs/02-architecture.md) | Architecture cible (hub VPS + WireGuard + OSPF) |
+| [docs/02-architecture.md](docs/02-architecture.md) | Architecture cible (tunnels WireGuard directs, VPS de secours, OSPF, zones) |
 | [docs/03-plan-adressage.md](docs/03-plan-adressage.md) | VLAN, sous-réseaux, conventions de nommage |
 | [docs/04-materiel.md](docs/04-materiel.md) | Matériel à acquérir / à réutiliser / à retirer |
 | [docs/05-supervision.md](docs/05-supervision.md) | Stack de supervision et d'alerte |

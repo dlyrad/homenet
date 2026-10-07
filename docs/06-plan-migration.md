@@ -11,7 +11,16 @@ Chaque phase est réversible et laisse le réseau existant fonctionnel.
 - [ ] Relever le nombre de caméras par site, et la capacité disque et la compatibilité ONVIF des NVR.
 - [ ] Cartographier le partage de connexion : position du point relais, nombre de proches et de clients du hotspot, modèles des CPE.
 
-## Phase 1 — Hub et lab
+## Phase 1 — Préparation sur table (matériel pas encore en service)
+Le hAP ax³ et le HPE 1920 ne sont pas encore en service : on les configure **à blanc, hors
+production**, puis on bascule en une seule fois.
+- [ ] Mettre à jour RouterOS (v7 stable) et le paquet `wifi-qcom` du hAP ax³ ; mettre à jour le firmware du HPE 1920.
+- [ ] Réinitialiser sans configuration par défaut, puis appliquer `configs/res-rtr-01.rsc` (VLAN, DHCP, DNS, pare-feu par zone, hotspot, QoS).
+- [ ] Configurer les VLAN et les ports du HPE 1920 selon [07-site1-cablage.md](07-site1-cablage.md).
+- [ ] Tester sur table : un PC sur chaque VLAN (DHCP, Internet via la box, isolation entre zones).
+- [ ] Bascule : brancher le hAP ax³ derrière la box, déplacer les équipements port par port (MANTBox et NanoBeam en premier), garder l'ancien routeur à portée pour un retour arrière.
+
+## Phase 1 bis — Hub et lab
 - [ ] Louer le VPS, installer CHR (ou Debian + WireGuard + FRR), durcir (SSH clé, pare-feu).
 - [ ] Monter un RB941 en lab avec la config type d'un site ; valider tunnel + OSPF + pare-feu.
 - [ ] VPN nomade (téléphone/PC) vers le hub.
