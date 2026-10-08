@@ -48,6 +48,22 @@ Switch de la maison ──── ether1 (WAN) hAP ax³ ether4 ──── PC d'
    Le routeur redémarre. Vérifier que `wifi-qcom` figure dans la liste des paquets.
 4. **System → RouterBOARD → Upgrade**, puis **System → Reboot** (mise à jour du firmware).
 
+### 1.2 bis Sauvegarder ce qui a déjà été saisi (Mikhmon, hotspot)
+
+Si des réglages ont été faits sur le hAP ax³ avant ce script (par ex. hotspot et tickets via
+Mikhmon), les exporter **avant** la remise à zéro :
+```
+/system backup save name=ax3-avant-reset
+/export file=ax3-avant-reset
+/ip hotspot user profile export file=hs-profils
+/ip hotspot user export file=hs-comptes
+/system script export file=hs-scripts
+/system scheduler export file=hs-planif
+```
+Récupérer ces fichiers sur le PC (**Files** → glisser vers le bureau), hors de Git.
+Ils seront réimportés après le script (profils, puis scripts, planificateurs, comptes),
+en ajoutant `parent-queue=q-hotspot` aux profils.
+
 ### 1.3 Remise à zéro sans configuration
 
 1. **System → Reset Configuration** : cocher **No Default Configuration** et **Do Not Backup**

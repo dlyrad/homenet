@@ -13,10 +13,10 @@
 
 L'archive (21 Mo, binaires Windows + code tiers GPL) **n'est pas versionnée** dans ce dépôt.
 
-**Décision (2026-10-08)** : Mikhmon est conservé tel quel pour le moment. Toutes ses données utiles
-(profils, comptes/tickets, scripts `on-login`, planificateurs) sont **stockées sur la MANTBox**,
-pas sur le PC : Mikhmon ne garde que les paramètres de connexion au routeur. La migration de
-l'étape B se fait donc entièrement depuis la MANTBox ; Mikhmon n'aura qu'à être repointé.
+**Décision (2026-10-08)** : Mikhmon est conservé tel quel pour le moment. Ses paramètres
+(profils, tickets, scripts) ont été **saisis sur le hAP ax³** avant l'application du script
+`res-rtr-01.rsc`. La remise à zéro de l'étape 1.3 les effacera : **les exporter avant**
+(voir [08-procedure-site1.md](08-procedure-site1.md), étape 1.2 bis).
 
 ## Raccordement au hAP ax³ (étape B)
 
