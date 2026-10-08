@@ -239,7 +239,7 @@ add name=wifi1-invites master-interface=wifi1 configuration=cfg-invites disabled
 add name=wifi2-invites master-interface=wifi2 configuration=cfg-invites disabled=yes
 
 # --- DDNS (pour les tunnels WireGuard de la phase 3) --------------------------
-/ip cloud set ddns-enabled=yes ddns-update-interval=5m
+:do { /ip cloud set ddns-enabled=yes ddns-update-interval=5m } on-error={ :log warning "res-rtr-01: DDNS IP Cloud non active" }
 
 # --- Durcissement -------------------------------------------------------------
 /ip service set telnet disabled=yes
@@ -252,9 +252,9 @@ add name=wifi2-invites master-interface=wifi2 configuration=cfg-invites disabled
 /ip service set winbox address=10.1.10.0/24
 /ip ssh set strong-crypto=yes
 /tool bandwidth-server set enabled=no
-/snmp community set [find name=public] disabled=yes
+:do { /snmp community set [find name=public] disabled=yes } on-error={ :log warning "res-rtr-01: communaute SNMP public non desactivee" }
 # Groupe limite pour Mikhmon (gestion des tickets via API, etape B)
-/user group add name=mikhmon policy=read,write,policy,test,api,sensitive comment="Mikhmon : tickets hotspot (scripts et planificateurs)"
+/user group add name=mikhmon policy=read,write,policy,test,api,sensitive
 
 # --- Restriction de l'acces MAC (tout a la fin, une fois tout le reste applique) -
 /tool mac-server set allowed-interface-list=Z-ADMIN
