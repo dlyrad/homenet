@@ -13,6 +13,11 @@
 
 L'archive (21 Mo, binaires Windows + code tiers GPL) **n'est pas versionnée** dans ce dépôt.
 
+**Décision (2026-10-08)** : Mikhmon est conservé tel quel pour le moment. Toutes ses données utiles
+(profils, comptes/tickets, scripts `on-login`, planificateurs) sont **stockées sur la MANTBox**,
+pas sur le PC : Mikhmon ne garde que les paramètres de connexion au routeur. La migration de
+l'étape B se fait donc entièrement depuis la MANTBox ; Mikhmon n'aura qu'à être repointé.
+
 ## Raccordement au hAP ax³ (étape B)
 
 - Compte dédié `mikhmon`, groupe `mikhmon` : `read, write, policy, test, api, sensitive`

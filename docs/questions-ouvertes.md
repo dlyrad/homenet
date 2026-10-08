@@ -13,7 +13,7 @@
 | Q10 | Caméras par site | 3 résidence, 3 bureau | 1 disque de 4 To par site ; 1,5 Mb/s de sous-flux inter-sites |
 | Q20 | La MANTBox a-t-elle des comptes/tickets hotspot ? | Oui | Export/import vers le hAP ax³ à l'étape B |
 | Q17 | Version RouterOS du hAP ax³ | 7.23.7 (long-term) | Script `configs/res-rtr-01.rsc` |
-| Q18 | Où tourne le portail captif ? | *Par défaut* : sur le hAP ax³ (option A) | À confirmer |
+| Q18 | Où tourne le portail captif ? | Sur la MANTBox pour l'instant ; sur le hAP ax³ à l'étape B (option A) | Mikhmon conservé, données sur la MANTBox |
 | Q19 | Débit réservé hotspot/proches | *Par défaut* : 6/40 Mb/s chacun, 2/6 Mb/s par client hotspot | À ajuster après mesure |
 
 ## À trancher
