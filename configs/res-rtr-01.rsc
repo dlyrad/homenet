@@ -9,7 +9,8 @@
 #   1. /system reset-configuration no-defaults=yes skip-backup=yes
 #   2. Se reconnecter en WinBox par adresse MAC (PC branche sur ether4)
 #   3. Glisser ce fichier dans Files, puis :  /import file-name=res-rtr-01.rsc verbose=yes
-#   4. Se reconnecter en WinBox sur 10.1.10.1 (PC sur ether4, IP auto via DHCP ADMIN)
+#   4. Verifier que la derniere ligne affiche "import termine sans erreur", puis
+#      se reconnecter en WinBox sur 10.1.10.1 (PC sur ether4, IP auto via DHCP ADMIN)
 #   5. /import file-name=res-rtr-01.secrets.rsc   puis supprimer ce fichier du routeur
 #
 # Ports :
@@ -118,7 +119,7 @@ add address=10.1.70.1/23 interface=vl70-hotspot
 add address=192.168.20.5/24 interface=vl80-relais
 
 # --- DNS ----------------------------------------------------------------------
-/ip dns set allow-remote-requests=yes servers=1.1.1.1,9.9.9.9 cache-size=4096KiB
+/ip dns set allow-remote-requests=yes servers=1.1.1.1,9.9.9.9 cache-size=4096
 /ip dns static add name=res-rtr-01.res.home.arpa address=10.1.10.1
 /ip dns static add name=res-sw-01.res.home.arpa address=10.1.10.2
 
@@ -153,6 +154,12 @@ add address=10.1.60.0/24 gateway=10.1.60.1 dns-server=10.1.60.1
 add address=10.1.70.0/23 gateway=10.1.70.1 dns-server=10.1.70.1
 add address=192.168.20.0/24 gateway=192.168.20.5 dns-server=192.168.20.5
 
+# --- Activation du filtrage VLAN ---------------------------------------------
+# Fait tot : si une ligne suivante echoue, ether4 donne deja une IP (VLAN 10, DHCP)
+# et le routeur reste joignable sur 10.1.10.1.
+# La session WinBox-MAC peut etre coupee ici : se reconnecter sur 10.1.10.1 via ether4.
+/interface bridge set br-lan frame-types=admit-only-vlan-tagged vlan-filtering=yes
+
 # --- Partage du debit (hotspot et proches) ------------------------------------
 # max-limit = montant/descendant (vu des clients). Valeurs de depart ~ 40 % d'un
 # lien 30/200 Mb/s : a ajuster apres mesure du montant reel de la box Yas.
@@ -170,7 +177,7 @@ add name=q-relais target=192.168.20.0/24 max-limit=6M/40M queue=pcq-up/pcq-down 
 add name=hsprof-res hotspot-address=10.1.70.1 dns-name=login.wifi html-directory=hotspot login-by=http-chap,cookie use-radius=no
 
 /ip hotspot user profile
-add name=up-standard rate-limit=2M/6M shared-users=1 parent-queue=q-hotspot comment="2 Mb/s montant / 6 Mb/s descendant par client"
+add name=up-standard rate-limit=2M/6M shared-users=1 parent-queue=q-hotspot
 
 /ip hotspot
 add name=hs-res interface=vl70-hotspot address-pool=none profile=hsprof-res disabled=no
@@ -208,7 +215,7 @@ add chain=srcnat action=masquerade out-interface-list=WAN comment="NAT sortie In
 # puis les active. wifi1 = 5 GHz, wifi2 = 2,4 GHz (a verifier dans /interface wifi).
 /interface wifi security
 add name=sec-maison authentication-types=wpa2-psk,wpa3-psk
-add name=sec-iot authentication-types=wpa2-psk comment="Objets Tuya : souvent WPA2 seul"
+add name=sec-iot authentication-types=wpa2-psk
 add name=sec-invites authentication-types=wpa2-psk,wpa3-psk
 
 /interface wifi datapath
@@ -242,13 +249,14 @@ add name=wifi2-invites master-interface=wifi2 configuration=cfg-invites disabled
 /ip service set winbox address=10.1.10.0/24
 /ip ssh set strong-crypto=yes
 /tool bandwidth-server set enabled=no
-/tool mac-server set allowed-interface-list=Z-ADMIN
-/tool mac-server mac-winbox set allowed-interface-list=Z-ADMIN
-/ip neighbor discovery-settings set discover-interface-list=Z-ADMIN
 /snmp community set [find name=public] disabled=yes
 # Groupe limite pour Mikhmon (gestion des tickets via API, etape B)
 /user group add name=mikhmon policy=read,write,policy,test,api,sensitive comment="Mikhmon : tickets hotspot (scripts et planificateurs)"
 
-# --- Activation du filtrage VLAN (en dernier) ---------------------------------
-# La session WinBox-MAC peut etre coupee ici : se reconnecter sur 10.1.10.1 via ether4.
-/interface bridge set br-lan frame-types=admit-only-vlan-tagged vlan-filtering=yes
+# --- Restriction de l'acces MAC (tout a la fin, une fois tout le reste applique) -
+/tool mac-server set allowed-interface-list=Z-ADMIN
+/tool mac-server mac-winbox set allowed-interface-list=Z-ADMIN
+/ip neighbor discovery-settings set discover-interface-list=Z-ADMIN
+
+:log info "res-rtr-01.rsc : import termine sans erreur"
+:put "=== res-rtr-01.rsc : import termine sans erreur ==="

@@ -78,8 +78,9 @@ en ajoutant `parent-queue=q-hotspot` aux profils.
    ```
    /import file-name=res-rtr-01.rsc verbose=yes
    ```
-3. Le terminal affiche chaque commande. À la dernière ligne (filtrage VLAN), la session WinBox
-   peut se couper : **c'est normal**.
+3. Le terminal affiche chaque commande. Vers le milieu (activation du filtrage VLAN), la session
+   WinBox par MAC peut se couper : **c'est normal**, l'import continue. Il est terminé quand le
+   journal (**Log**) affiche « `res-rtr-01.rsc : import termine sans erreur` ».
 4. Le PC (sur ether4, en DHCP) reçoit une adresse `10.1.10.2xx`. Si ce n'est pas le cas : débrancher
    puis rebrancher le câble, ou `ipconfig /renew` dans PowerShell.
 5. WinBox → se connecter à **`10.1.10.1`** (`admin` + mot de passe de l'étiquette).
@@ -87,6 +88,27 @@ en ajoutant `parent-queue=q-hotspot` aux profils.
 > **En cas d'erreur pendant l'import** : l'import s'arrête à la ligne fautive. Noter le message,
 > me l'envoyer, puis **recommencer depuis 1.3** (remise à zéro) avec le script corrigé : un
 > import partiel ne doit pas être complété à la main.
+
+### 1.4 bis Dépannage : le PC sur ether4 n'obtient pas d'adresse
+
+1. **Le PC est-il en DHCP ?** Windows → *Paramètres réseau* → carte Ethernet → IPv4 :
+   **« Obtenir une adresse IP automatiquement »**. Une IP fixe (ex. l'ancienne `192.168.1.66`)
+   empêche toute attribution.
+2. **Test en IP fixe** : mettre le PC en `10.1.10.100`, masque `255.255.255.0`, passerelle
+   `10.1.10.1`, DNS `10.1.10.1`, puis `ping 10.1.10.1`.
+   - Le ping répond → seul le DHCP pose problème ; WinBox sur `10.1.10.1`.
+   - Pas de réponse → l'import s'est sans doute arrêté avant l'activation du filtrage VLAN.
+3. **Connexion par MAC** : WinBox → **Neighbors** → adresse MAC → `admin`. Puis, dans le terminal :
+   ```
+   /log print where message~"import"
+   /interface bridge print
+   /ip address print
+   /ip dhcp-server print
+   ```
+   et m'envoyer le résultat (et le message d'erreur de l'import s'il est encore affiché).
+4. **Repartir proprement** : remise à zéro (étape 1.3) puis import de la dernière version du script.
+   En dernier recours, bouton **Reset** maintenu à l'allumage ~5 s (voyant clignotant) : retour
+   à la configuration d'usine (`192.168.88.1`).
 
 ### 1.5 Secrets, puis compte administrateur
 
