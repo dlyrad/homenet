@@ -112,9 +112,14 @@ en ajoutant `parent-queue=q-hotspot` aux profils.
 
 ### 1.5 Secrets, puis compte administrateur
 
+> ⚠️ Importer le fichier des secrets **sans** `verbose=yes` : ce mode affiche chaque ligne, donc
+> les mots de passe, à l'écran. Ne jamais copier cette sortie (ni le fichier) dans un chat,
+> un ticket ou Git. Mots de passe **différents** pour chaque usage (admin, Wi-Fi, SNMP,
+> Mikhmon), 12 caractères minimum, sans date de naissance ni nom.
+
 1. **Files** → déposer `res-rtr-01.secrets.rsc`, puis :
    ```
-   /import file-name=res-rtr-01.secrets.rsc verbose=yes
+   /import file-name=res-rtr-01.secrets.rsc
    /file remove res-rtr-01.secrets.rsc
    ```
 2. **Se déconnecter**, se reconnecter à `10.1.10.1` avec le **nouveau compte** ; si ça marche :
