@@ -153,7 +153,9 @@ navigue sur Internet ; les Wi-Fi « Maison », « Maison-IoT » et « Maison-Inv
 1. Retirer le HPE de derrière le Netgear (la caméra PoE sera coupée le temps de la configuration).
    Relier le **port 5** du switch à **ether5** du hAP ax³ (accès ADMIN, provisoirement).
    Le switch est client DHCP par défaut : son IP apparaît dans
-   **IP → DHCP Server → Leases** du hAP ax³ (`10.1.10.2xx`).
+   **IP → DHCP Server → Leases** du hAP ax³ (`10.1.10.2xx`). En terminal :
+   `/ip dhcp-server lease print where server=dhcp-admin` ou `/ip neighbor print`
+   (le HPE s'annonce en LLDP). Rien après 2 min : débrancher/rebrancher l'alimentation du HPE.
 2. Navigateur → `http://10.1.10.2xx` → compte `admin`, mot de passe vide (par défaut).
 3. **Device → Device Maintenance → Software Upgrade** : dernier firmware disponible.
 4. **Network → VLAN → Create** : `10,20,30,40,50,60,70,80` ; nommer chaque VLAN
@@ -172,7 +174,11 @@ navigue sur Internet ; les Wi-Fi « Maison », « Maison-IoT » et « Maison-Inv
    | SFP 1–2 | — | — | — | — (désactivés) |
    | **5 (en dernier)** | Trunk | 1 | — | 10–80 |
 
-   Retirer le VLAN 1 non tagué des ports *hybrid*. Au passage du port 5 en trunk, la
+   Dans l'interface, les ports s'appellent `GE1/0/1` à `GE1/0/8` (SFP : `GE1/0/9`, `GE1/0/10`).
+   Méthode dans **Modify Port** : cocher le(s) port(s) sur le dessin du switch, choisir
+   *Link Type* (Access / Trunk / Hybrid) → *Apply* ; puis, même écran, *PVID* → *Apply* ;
+   puis *Untagged* ou *Tagged* + liste des VLAN → *Apply*. Cliquer **Save** de temps en temps.
+   Retirer le VLAN 1 non tagué des ports *hybrid* (*Not A Member* → VLAN 1). Au passage du port 5 en trunk, la
    connexion coupe : **déplacer le câble du port 5 de ether5 vers ether2** du hAP ax³ et
    rejoindre le switch sur `10.1.10.2` (PC toujours sur ether4).
 7. Retirer l'adresse de **Vlan-interface 1** (management uniquement par VLAN 10).
