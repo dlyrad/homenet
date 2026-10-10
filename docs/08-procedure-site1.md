@@ -189,6 +189,24 @@ navigue sur Internet ; les Wi-Fi « Maison », « Maison-IoT » et « Maison-Inv
 > Ports SFP : modules **1000BASE-T (SFP → RJ45)** ; préférer un modèle compatible HPE
 > (ex. JD089B ou équivalent codé HPE), certains modules génériques sont refusés.
 
+### Retour d'expérience (2026-10-10) — pièges rencontrés sur le HPE 1920
+
+| Symptôme | Cause | Solution |
+|---|---|---|
+| Page du switch inaccessible depuis le PC | PC connecté en **Wi-Fi** (VLAN 30, bloqué vers l'admin) | Couper le Wi-Fi, PC **câblé sur ether4** |
+| *The IP address you entered overlaps with another interface* en créant `10.1.10.2` | Vlan-interface 1 avait déjà `10.1.10.2xx` (DHCP via ether5) | Adresse provisoire (voir ci-dessous) |
+| *VLAN 10 does not exist* | Les VLAN doivent exister **avant** leur Vlan-interface | **VLAN → Create** d'abord |
+| Champ masque refusé | Le HPE attend une **longueur** | *Mask Length* = `24` |
+| *Access port will be changed to hybrid* sur le port 5 | Tagger un port Access le convertit | **OK** : Hybrid = Trunk pour notre usage |
+| `10.1.10.2` ne répond pas alors que l'ARP passe | ether2 laissé **untagged** VLAN 10 après un essai de dépannage | Remettre ether2 en tagged (`pvid=1`, `admit-only-vlan-tagged`) |
+
+**Méthode de l'adresse provisoire** (le PC reste sur ether4) :
+1. hAP : `/ip address add address=192.168.0.254/24 interface=vl10-admin comment="TEMP HPE"` et
+   `/ip firewall nat add chain=srcnat dst-address=192.168.0.0/24 action=masquerade comment="TEMP HPE"`.
+2. HPE : Vlan-interface 1 → Manual `192.168.0.1/24` ; rouvrir `http://192.168.0.1`.
+3. VLAN → Create (10…80), puis Vlan-interface 10 = `10.1.10.2` / `24`, ports, Save, port 5 tagged, câble → ether2.
+4. `http://10.1.10.2` → retirer l'IP de Vlan-interface 1, Save ; hAP : supprimer les entrées `TEMP HPE`.
+
 ## Étape 3 — Tests sur table (avant toute bascule)
 
 Brancher un PC successivement sur chaque type de port et vérifier :

@@ -8,15 +8,15 @@ Chaque phase est réversible et laisse le réseau existant fonctionnel.
 - [ ] Vérifier que chaque box accepte une **DMZ** ou une redirection UDP.
 - [ ] Mesurer la latence depuis chaque site vers des VPS candidats (Paris, Marseille, Francfort…).
 - [ ] Avec **ONVIF Device Manager**, relever pour 2–3 caméras l'URL RTSP, le codec (H.264/H.265), la résolution et le débit des flux principal et secondaire.
-- [ ] Relever le nombre de caméras par site, et la capacité disque et la compatibilité ONVIF des NVR.
-- [ ] Cartographier le partage de connexion : position du point relais, nombre de proches et de clients du hotspot, modèles des CPE.
+- [x] Relever le nombre de caméras par site (3 + 3) ; reste : la capacité disque et la compatibilité ONVIF des NVR.
+- [x] Cartographier le partage de connexion (10 équipements proches relevés en VLAN 80) : position du point relais, nombre de proches et de clients du hotspot, modèles des CPE.
 
 ## Phase 1 — Préparation sur table (matériel pas encore en service)
 Le hAP ax³ et le HPE 1920 ne sont pas encore en service : on les configure **à blanc, hors
 production**, puis on bascule en une seule fois.
-- [ ] Mettre à jour RouterOS (v7 stable) et le paquet `wifi-qcom` du hAP ax³ ; mettre à jour le firmware du HPE 1920.
-- [ ] Réinitialiser sans configuration par défaut, puis appliquer `configs/res-rtr-01.rsc` (VLAN, DHCP, DNS, pare-feu par zone, hotspot, QoS).
-- [ ] Configurer les VLAN et les ports du HPE 1920 selon [07-site1-cablage.md](07-site1-cablage.md).
+- [x] Mettre à jour RouterOS (v7 stable) et le paquet `wifi-qcom` du hAP ax³ ; mettre à jour le firmware du HPE 1920.
+- [x] Réinitialiser sans configuration par défaut, puis appliquer `configs/res-rtr-01.rsc` (VLAN, DHCP, DNS, pare-feu par zone, hotspot, QoS).
+- [x] Configurer les VLAN et les ports du HPE 1920 selon [07-site1-cablage.md](07-site1-cablage.md).
 - [ ] Tester sur table : un PC sur chaque VLAN (DHCP, Internet via la box, isolation entre zones).
 - [ ] Bascule : brancher le hAP ax³ derrière la box, déplacer les équipements port par port (MANTBox et NanoBeam en premier), garder l'ancien routeur à portée pour un retour arrière.
 
