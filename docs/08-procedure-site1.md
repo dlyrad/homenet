@@ -193,6 +193,7 @@ navigue sur Internet ; les Wi-Fi « Maison », « Maison-IoT » et « Maison-Inv
 
 | Symptôme | Cause | Solution |
 |---|---|---|
+| AirGrid M5 ne voit pas le Wi-Fi 5 GHz du hAP (il voit les autres réseaux) | airOS M ignore les balises **Wi-Fi 6** (`5ghz-ax`) | `channel.band=5ghz-ac`, canal fixe `5180` ; sur l'AirGrid, *Frequency Scan List* = 5180 |
 | Page du switch inaccessible depuis le PC | PC connecté en **Wi-Fi** (VLAN 30, bloqué vers l'admin) | Couper le Wi-Fi, PC **câblé sur ether4** |
 | *The IP address you entered overlaps with another interface* en créant `10.1.10.2` | Vlan-interface 1 avait déjà `10.1.10.2xx` (DHCP via ether5) | Adresse provisoire (voir ci-dessous) |
 | *VLAN 10 does not exist* | Les VLAN doivent exister **avant** leur Vlan-interface | **VLAN → Create** d'abord |
