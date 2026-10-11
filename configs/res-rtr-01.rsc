@@ -132,7 +132,7 @@ add name=pool-iot ranges=10.1.40.50-10.1.40.250
 add name=pool-cam ranges=10.1.50.50-10.1.50.250
 add name=pool-guest ranges=10.1.60.50-10.1.60.250
 add name=pool-hotspot ranges=10.1.70.10-10.1.71.250
-add name=pool-relais ranges=192.168.20.240-192.168.20.250 comment="Petite plage a verifier libre : les equipements des proches sont en IP fixe"
+add name=pool-relais ranges=192.168.20.240-192.168.20.250 comment="Plage dynamique ; les equipements connus ont un bail statique"
 
 /ip dhcp-server
 add name=dhcp-admin interface=vl10-admin address-pool=pool-admin lease-time=1h comment="Depannage uniquement"
@@ -142,7 +142,7 @@ add name=dhcp-iot interface=vl40-iot address-pool=pool-iot lease-time=1d
 add name=dhcp-cam interface=vl50-cam address-pool=pool-cam lease-time=1d comment="Passer chaque camera en bail statique (.10-.49)"
 add name=dhcp-guest interface=vl60-guest address-pool=pool-guest lease-time=2h
 add name=dhcp-hotspot interface=vl70-hotspot address-pool=pool-hotspot lease-time=1h
-add name=dhcp-relais interface=vl80-relais address-pool=pool-relais lease-time=1d disabled=yes comment="Desactive : proches en IP fixe (ex-Xiaomi). Activer apres inventaire"
+add name=dhcp-relais interface=vl80-relais address-pool=pool-relais lease-time=1d comment="Actif : baux statiques par equipement + petite plage dynamique"
 
 /ip dhcp-server network
 add address=10.1.10.0/24 gateway=10.1.10.1 dns-server=10.1.10.1 ntp-server=10.1.10.1 domain=res.home.arpa
@@ -153,6 +153,14 @@ add address=10.1.50.0/24 gateway=10.1.50.1 dns-server=10.1.50.1 ntp-server=10.1.
 add address=10.1.60.0/24 gateway=10.1.60.1 dns-server=10.1.60.1
 add address=10.1.70.0/23 gateway=10.1.70.1 dns-server=10.1.70.1
 add address=192.168.20.0/24 gateway=192.168.20.5 dns-server=192.168.20.5
+
+# Baux statiques du VLAN 80 (releves le 2026-10-11 : equipements en DHCP, passes en 169.254.x
+# a la bascule). Adresses libres pour un nouvel equipement en IP fixe : 192.168.20.50-.99.
+/ip dhcp-server lease
+add server=dhcp-relais mac-address=E4:11:5B:27:4D:C9 address=192.168.20.119 comment="WIL2"
+add server=dhcp-relais mac-address=B8:69:F4:81:85:C5 address=192.168.20.166
+add server=dhcp-relais mac-address=DC:2C:6E:8E:47:10 address=192.168.20.231
+add server=dhcp-relais mac-address=F4:1E:57:16:FF:D0 address=192.168.20.136 comment="MANTBox"
 
 # --- Activation du filtrage VLAN ---------------------------------------------
 # Fait tot : si une ligne suivante echoue, ether4 donne deja une IP (VLAN 10, DHCP)

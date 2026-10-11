@@ -235,8 +235,12 @@ Pendant les tests, le hAP ax³ sort sur Internet par son ether1, branché au swi
    la **MANTBox** sur le **port 6** (VLAN 80, chacune avec son injecteur). Le hAP ax³ reprend
    l'adresse `192.168.20.5` : pour les proches et pour la MANTBox, rien ne change, mais **ils
    n'atteignent plus la maison**. C'est la fin du risque n° 1.
-   Le DHCP du VLAN 80 reste **désactivé** (tous les équipements sont en IP fixe) ; à activer
-   plus tard sur une petite plage vérifiée libre (`/ip dhcp-server enable dhcp-relais`).
+   Le DHCP du VLAN 80 est **actif** : contrairement à ce qui était prévu, certains équipements
+   étaient en DHCP sur le Xiaomi et sont passés en `169.254.x` à la bascule. Chaque équipement
+   connu reçoit un **bail statique** (son ancienne adresse) ; la plage dynamique se limite à
+   `.240–.250`. Pour un nouvel équipement : IP fixe dans `.50–.99`, ou bail statique
+   (`/ip dhcp-server lease add server=dhcp-relais mac-address=... address=...`), passerelle et
+   DNS `192.168.20.5`.
    Ensuite, sur chaque radio (NanoBeam, LiteAP, Loco) : activer le **VLAN de management 10**
    et une IP fixe `10.1.10.3x`, une radio à la fois, en commençant par la plus éloignée.
 5. **MANTBox, étape B (plus tard)** : le hotspot et ses tickets passent sur le hAP ax³ ;

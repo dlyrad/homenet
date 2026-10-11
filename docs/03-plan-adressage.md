@@ -32,6 +32,10 @@ sans rien reconfigurer chez eux. Ce VLAN ne sort jamais du site et n'est jamais 
 les autres sites, donc pas de conflit possible. Renumérotation en `10.1.80.0/24` plus tard,
 si besoin.
 
+DHCP du RELAIS (site 1) : actif, avec un **bail statique par équipement connu** (ex. MANTBox
+`.136`, WIL2 `.119`, plus `.166` et `.231`) et une plage dynamique `.240–.250`. Les IP fixes
+des nouveaux équipements se prennent dans `.50–.99`.
+
 Les VLAN 70 et 80 n'existent aujourd'hui qu'à la résidence. HOTSPOT est un `/23` pour
 accueillir plus de 250 clients.
 
