@@ -232,8 +232,10 @@ add name=cfg-invites mode=ap ssid="Maison-Invites" country=Togo security=sec-inv
 # Redonne leurs noms d'origine aux radios (elles peuvent avoir ete renommees, ex. "Mikrotik")
 set [find default-name=wifi1] name=wifi1
 set [find default-name=wifi2] name=wifi2
-set [find default-name=wifi1] configuration=cfg-maison channel.band=5ghz-ax channel.width=20/40/80mhz disabled=yes
-set [find default-name=wifi2] configuration=cfg-maison channel.band=2ghz-ax channel.width=20mhz disabled=yes
+# Togo : 5 GHz limite a 20/40 MHz (pas de 80 MHz), canaux 36-48 "indoor" -> installation=indoor
+set [find default-name=wifi1] configuration=cfg-maison configuration.installation=indoor channel.band=5ghz-ax channel.width=20/40mhz disabled=yes
+# 2,4 GHz : canaux 1/6/11 seulement (beaucoup d'appareils ignorent 12 et 13)
+set [find default-name=wifi2] configuration=cfg-maison configuration.installation=indoor channel.band=2ghz-ax channel.width=20mhz channel.frequency=2412,2437,2462 disabled=yes
 add name=wifi2-iot master-interface=wifi2 configuration=cfg-iot disabled=yes
 add name=wifi1-invites master-interface=wifi1 configuration=cfg-invites disabled=yes
 add name=wifi2-invites master-interface=wifi2 configuration=cfg-invites disabled=yes
