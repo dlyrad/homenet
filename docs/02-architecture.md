@@ -91,6 +91,9 @@ plus deux zones **externes** à la résidence pour les utilisateurs non-membres 
 ¹ Home Assistant / supervision vers IoT. ² Frigate/NVR vers caméras (RTSP 554, ONVIF 80/8000).
 ³ Services publiés (web, partages). ⁴ Selon besoin (cast…). ⁵ Isolation entre clients.
 
+- **Exception temporaire (2026-10-11)** : une règle `TEMP: cameras -> Internet (iCSee)` autorise
+  CAM → Internet pour l'appli iCSee, en attendant Frigate + VPN (phase 4). Les caméras restent
+  isolées des autres zones.
 - **Caméras sans Internet** : l'appli Tuya n'est pas indispensable, donc le VLAN CAM
   est totalement coupé d'Internet (plus de fuite vers le cloud, plus de porte dérobée).
   On les voit à distance via **Frigate** (ou Home Assistant) **à travers le VPN**.

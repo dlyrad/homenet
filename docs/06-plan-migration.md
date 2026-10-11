@@ -37,7 +37,7 @@ production**, puis on bascule en une seule fois.
 - [ ] OSPF : vérifier que `10.1.0.0/16` et `10.2.0.0/16` se voient ; tester la bascule via le hub.
 
 ## Phase 4 — Vidéo et supervision
-- [ ] Couper Internet au VLAN CAM ; vérifier que les flux RTSP/ONVIF fonctionnent toujours.
+- [ ] Couper Internet au VLAN CAM : **supprimer la règle temporaire** `TEMP: cameras -> Internet (iCSee)` (ajoutée le 2026-10-11 pour l'appli iCSee) avec `/ip firewall filter remove [find comment~"TEMP: cameras"]` ; vérifier que les flux RTSP/ONVIF fonctionnent toujours.
 - [ ] Frigate résidence (Ryzen) et bureau (Dell) : caméras locales enregistrées, caméras distantes en sous-flux.
 - [ ] Accès distant aux caméras par le VPN nomade (téléphone).
 - [ ] Zabbix/Grafana/NetBox/Loki ; alertes Telegram.
