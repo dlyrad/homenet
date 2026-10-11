@@ -233,7 +233,7 @@ add name=cfg-invites mode=ap ssid="Maison-Invites" country=Togo security=sec-inv
 set [find default-name=wifi1] name=wifi1
 set [find default-name=wifi2] name=wifi2
 # Togo : 5 GHz limite a 20/40 MHz (pas de 80 MHz), canaux 36-48 "indoor" -> installation=indoor
-set [find default-name=wifi1] configuration=cfg-maison configuration.installation=indoor channel.band=5ghz-ax channel.width=20/40mhz disabled=yes
+set [find default-name=wifi1] configuration=cfg-maison configuration.installation=indoor channel.band=5ghz-ax channel.width=20/40mhz channel.frequency=5180,5200,5220,5240 disabled=yes
 # 2,4 GHz : canaux 1/6/11 seulement (beaucoup d'appareils ignorent 12 et 13)
 set [find default-name=wifi2] configuration=cfg-maison configuration.installation=indoor channel.band=2ghz-ax channel.width=20mhz channel.frequency=2412,2437,2462 disabled=yes
 add name=wifi2-iot master-interface=wifi2 configuration=cfg-iot disabled=yes
