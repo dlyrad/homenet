@@ -5,7 +5,7 @@ Chaque phase est réversible et laisse le réseau existant fonctionnel.
 ## Phase 0 — Inventaire et mesures
 - [ ] Recenser chaque équipement (site, emplacement, MAC, IP actuelle, usage) → NetBox.
 - [x] Vérifier le CGNAT : les box ont une IP publique (dynamique) → tunnels directs possibles.
-- [ ] Vérifier que chaque box accepte une **DMZ** ou une redirection UDP.
+- [x] DMZ résidence : box Yas (GPON, *Security → DMZ and ALG*) → `192.168.1.2`, vérifiée le 2026-10-11 (trafic entrant non sollicité reçu sur ether1). Bureau : à faire.
 - [ ] Mesurer la latence depuis chaque site vers des VPS candidats (Paris, Marseille, Francfort…).
 - [ ] Avec **ONVIF Device Manager**, relever pour 2–3 caméras l'URL RTSP, le codec (H.264/H.265), la résolution et le débit des flux principal et secondaire.
 - [x] Relever le nombre de caméras par site (3 + 3) ; reste : la capacité disque et la compatibilité ONVIF des NVR.
