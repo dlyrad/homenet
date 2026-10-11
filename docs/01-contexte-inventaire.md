@@ -37,6 +37,7 @@ transit entre la box et le MikroTik et n'est jamais routé entre les sites.
 | Routeurs Xiaomi | ? | Firmware fermé | Retrait |
 | MikroTik MANTBox | 1 | Radio extérieure | **Hotspot / portail captif** pour des clients, **avec comptes/tickets** (à migrer vers le hAP ax³, étape B) |
 | Ubiquiti NanoBeam | 1 | Radio point-à-point | **Pont** résidence → point relais |
+| Ubiquiti **AirGrid M5** | 1 | Grille 5 GHz directive, airOS M (802.11a/n, ne voit pas le Wi-Fi 6) | Client Wi-Fi du hAP ax³ (SSID 5 GHz) → routeur du **jardin**, à 30 m. Cible : câble ou AP extérieur |
 | Ubiquiti LiteAP AC | 1 | Secteur point-multipoint | **Point d'accès** au point relais pour les proches |
 | Ubiquiti Loco AC | 2 | Radio | Point d'accès au relais (1) ; usage de la 2e à préciser |
 | Mini-serveur Dell Xeon 7e gén., 16 Go, 1 To SSD, Proxmox | 2 | 1 résidence, 1 bureau | Services d'infra par site |
